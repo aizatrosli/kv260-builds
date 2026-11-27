@@ -50,6 +50,7 @@ class Backend:
     name = "base"
     coherent = True
     has_vpu = False
+    lut_rom = None        # {idx: words}: VPU LUT-ROM contents for simulated backends (vpu.jepa_lut_rom)
     max_buf_bytes = 64 << 20
     estimated_timing = False        # True: wall_ns is a model estimate, not a measurement
     preferred_arena = 4 << 20       # DmaPool arena size that suits this backend

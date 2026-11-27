@@ -328,6 +328,7 @@ class FakeFabric:
 
     def __init__(self, region, version=0x400, build_id=0x6AF93498, vpu=False):
         self.region, self.vpu = region, vpu
+        self.lut_rom = {}                 # VPU LUT ROM of the simulated bitstream
         self.r = {R_VERSION: version, R_BUILD_ID: build_id, R_STATUS: 0, R_CTRL: 0, R_LEVEL: 0, R_CSTATUS: 0,
                   R_IRQ_TAG: 0}
         self.idma = {}
@@ -386,7 +387,8 @@ class FakeFabric:
             self.r[R_STATUS] = 0
         if v & CTRL_RUN and v & CTRL_UB_OWN and self.ififo:
             from .. import fastsim
-            m = fastsim.FastCoreSim(enable_dma=True, mem=self._mem(), vpu_enabled=self.vpu).run(self.ififo)
+            m = fastsim.FastCoreSim(enable_dma=True, mem=self._mem(), vpu_enabled=self.vpu,
+                                       lut_rom=self.lut_rom).run(self.ififo)
             self.ififo = []
             self.r[R_LEVEL] = 0
             cs = 0

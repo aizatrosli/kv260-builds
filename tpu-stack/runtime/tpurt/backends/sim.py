@@ -78,7 +78,7 @@ class SimBackend(Backend):
             cycles = {"other": m.instr_count}
         else:
             m = fastsim.FastCoreSim(enable_dma=True, mem=_Mem(self), check_hazards=self.check_hazards,
-                                    vpu_enabled=self.has_vpu).run(words)
+                                    vpu_enabled=self.has_vpu, lut_rom=self.lut_rom).run(words)
             cycles = m.cycles
         self.last_sim = m
         status = RUN_CFG_ERR if m.cfg_err else (RUN_OK if m.halted and m.irq_count >= 1 else RUN_TIMEOUT)

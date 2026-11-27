@@ -72,7 +72,7 @@ def test_random_programs_identical_incl_hazards_and_cfg_err():
 
 
 def test_vector_opcode_semantics(P):
-    """Provisional VECTOR instruction == intops on gathered vectors (all four functions + LUT loads)."""
+    """X_VEC / X_LUT / X_VCFG == intops on gathered vectors (all four functions + LUT-ROM loads)."""
     import intops as I
     rng = np.random.default_rng(0)
     M = 64
@@ -82,39 +82,40 @@ def test_vector_opcode_semantics(P):
     G = rng.integers(-128, 128, (M, 512))
     rows = lambda A: [list(r) for r in tile(A).reshape(-1, 16)]
     ub = rows(X) + rows(Y) + rows(S) + rows(G)                     # X@0 Y@512 S@1024 G@1280
-    lut_e, lut_g = vpu.lut_rows(P["exp0"]), vpu.lut_rows(P["gelu0"])
-    base_l = len(ub)
-    ub += [list(r) for r in lut_e] + [list(r) for r in lut_g]
+    rom = {3: vpu.rom_entry(vpu.LUT_EXP, P["exp0"]), 9: vpu.rom_entry(vpu.LUT_GELU, P["gelu0"])}
     ma, mb = P["adda0"]
-    prog = [asm.set_config(vpu.VPU_MULT, vpu.mult_value(ma, mb)),
-            vpu.vector(vpu.F_LDE, base_l), vpu.vector(vpu.F_LDG, base_l + 32),
-            vpu.vector(vpu.F_ADD, 0, 4000, M, 8, M, ub_b=512),
-            vpu.vector(vpu.F_LN, 0, 5000, M, 8, M),
-            vpu.vector(vpu.F_SM, 1024, 6000, M, 4, M),
-            vpu.vector(vpu.F_LUT, 1280, 7000, M, 32, M),
+    prog = [vpu.vcfg(ma, mb), vpu.lut(vpu.LUT_EXP, 3), vpu.lut(vpu.LUT_GELU, 9),
+            vpu.vec(vpu.V_ADD, 8, 0, 4000, M, M, b=512),
+            vpu.vec(vpu.V_LN, 8, 0, 5000, M, M),
+            vpu.vec(vpu.V_SM, 4, 1024, 6000, M, M),
+            vpu.vec(vpu.V_LUT, 32, 1280, 7000, M, M),
             asm.interrupt_host(1), asm.halt()]
-    m = fastsim.FastCoreSim(ub, vpu_enabled=True).run(prog)
+    m = fastsim.FastCoreSim(ub, vpu_enabled=True, lut_rom=rom).run(prog)
     assert not m.cfg_err and m.halted
     get = lambda r0, T: untile(m.ubA[r0:r0 + T * M].reshape(T, M, 16))
     assert (get(4000, 8) == I.ew_add(X, Y, ma, mb)).all()
     assert (get(5000, 8) == I.layernorm(X)).all()
     assert (get(6000, 4) == I.softmax(S, P["exp0"])).all()
     assert (get(7000, 32) == I.lut8(G, P["gelu0"])).all()
-    # without the VPU the opcode is illegal, like on today's bitstream
-    m2 = fastsim.FastCoreSim(ub).run(prog[1:])
-    assert m2.cfg_err and m2.cfg_err_op == vpu.OP_VECTOR
-    # bad VECTOR fields are cfg_err too
-    m3 = fastsim.FastCoreSim(ub, vpu_enabled=True).run([vpu.vector(vpu.F_LN, 65500, 0, 64, 8, 64)])
-    assert m3.cfg_err
+    # without the VPU the extension opcodes are illegal, like on today's bitstream
+    m2 = fastsim.FastCoreSim(ub).run(prog[3:])
+    assert m2.cfg_err and m2.cfg_err_op == vpu.X_VEC
+    # bad fields, a LUT index missing from the ROM, and unsupported extension ops are cfg_err too
+    for w in (vpu.vec(vpu.V_LN, 8, 65500, 0, 64, 64), vpu.lut(vpu.LUT_EXP, 7), vpu.xenc(vpu.X_WROM, count=1),
+              vpu.vec(vpu.V_LN, 8, 0, 0, 64, 64) | (1 << 120)):
+        assert fastsim.FastCoreSim(ub, vpu_enabled=True, lut_rom=rom).run([w]).cfg_err
 
 
 def test_vpu_encoding_roundtrip():
-    w = vpu.vector(vpu.F_SM, 123, 456, 64, 4, 1024, 789)
-    f = vpu.decode(w)
-    assert (f["func"], f["ub_a"], f["ub_out"], f["count"], f["chunks"], f["stride"], f["ub_b"], f["reserved"]) == \
-        (vpu.F_SM, 123, 456, 64, 4, 1024, 789, 0)
-    assert vpu.mult_decode(vpu.mult_value(-5, 131071)) == (-5, 131071)
+    w = vpu.vec(vpu.V_SM, 4, 123, 456, 64, 1024, 3, b=789)
+    assert w & 0xFF == 0x43
+    op, f = vpu.xdec(w)
+    assert (op, f) == (vpu.X_VEC, dict(op=vpu.V_SM, rows=4, a=123, b=789, o=456, count=64, rstride=1024, vstride=3))
+    assert vpu.xdec(vpu.vcfg(-5, 131071)) == (vpu.X_VCFG, dict(ma=-5, mb=131071))
+    assert vpu.xdec(vpu.lut(1, 200)) == (vpu.X_LUT, dict(sel=1, idx=200))
     with pytest.raises(ValueError):
-        vpu.mult_value(1 << 17, 0)
+        vpu.vcfg(1 << 17, 0)
+    with pytest.raises(ValueError):
+        vpu.vec(vpu.V_LN, 64, 0, 0, 1, 1)                 # rows is 6 bits
     t = np.arange(-128, 128)
-    assert (vpu.lut_from_rows(vpu.lut_rows(t), signed=True) == t).all()
+    assert (vpu.rom_table(vpu.LUT_GELU, vpu.rom_entry(vpu.LUT_GELU, t)) == t).all()

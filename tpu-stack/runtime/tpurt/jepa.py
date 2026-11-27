@@ -11,7 +11,7 @@ order (pack_kv) and the TPU streams them with READ_WEIGHTS (no UB->weight path y
 
 vector="host": LayerNorm / softmax / GELU / residual run on the host (C kernels or numpy, bit-exact
 with intops) between TPU programs (5 programs + 6 host calls per layer).
-vector="vpu":  they become VECTOR instructions (provisional opcode, tpurt/vpu.py) fused into the TPU
+vector="vpu":  they become VECTOR instructions (jepa_top sequencer extension X_VEC/X_LUT/X_VCFG, tpurt/vpu.py) fused into the TPU
 programs; only pack_kv stays on the host.  Runs on the sim/mock backends today and on a bitstream
 with the VPU once its encoding is confirmed.
 
@@ -43,6 +43,10 @@ class JepaExecutor(GraphExecutor):
         self.P = P if P is not None else load_qmodel()
         c = self.P["cfg"]
         self.D, self.H, self.L, self.F = c["dim"], c["heads"], c["depth"], c["mlp"]
+        if vector == "vpu" and hasattr(backend, "lut_rom"):
+            # Simulated backends: supply the LUT ROM. On a bitstream it is baked in (lrom.hex) and must
+            # hold the same tables in compile_jepa's layout (vpu.lrom_hex(vpu.jepa_lut_rom(P, L))).
+            backend.lut_rom = vpu.jepa_lut_rom(self.P, self.L)
         self.dh, self.B, self.M = self.D // self.H, batch, TOK * batch
         self.vector, self.ops = vector, get_ops(ops)
         self.prof = profiler or Profiler()
@@ -81,9 +85,9 @@ class JepaExecutor(GraphExecutor):
         # ---- vector-op emitters (host step or VECTOR instruction) ----------------------------
         def residual(name, a, b, out, mult, then_ln=None, ln_out=None):
             if vp:
-                steps.append(Vec(name, vpu.F_ADD, a, 0, out, 0, M, T, M, b=b, mult=mult, op="residual"))
+                steps.append(Vec(name, vpu.V_ADD, a, 0, out, 0, M, T, M, b=b, mult=mult, op="residual"))
                 if then_ln:
-                    steps.append(Vec(name + ".ln", vpu.F_LN, out, 0, ln_out, 0, M, T, M, op="layernorm"))
+                    steps.append(Vec(name + ".ln", vpu.V_LN, out, 0, ln_out, 0, M, T, M, op="layernorm"))
                 return
 
             def fn(ctx, a=a, b=b, out=out, ln_out=ln_out, mult=mult):
@@ -141,10 +145,10 @@ class JepaExecutor(GraphExecutor):
                                       kT, g * 4 * KTd * 256, np.full(64, m0), np.full(64, sh), np.zeros(64, int),
                                       x_load=(0, T * M), op="qk"))
             if vp:
-                lut_e = const(f"lut_exp{l}", vpu.lut_rows(P[f"exp{l}"]), (vpu.LUT_ROWS, 16))
+                lut_e = vpu.lut_idx(vpu.LUT_EXP, l, L)
                 for g in range(B * H):
-                    steps.append(Vec(f"sm{l}.{g}", vpu.F_SM, s, g * 4 * TOK, p, g * 4 * TOK, TOK, 4, TOK,
-                                     lut=lut_e, op="softmax"))
+                    steps.append(Vec(f"sm{l}.{g}", vpu.V_SM, s, g * 4 * TOK, p, g * 4 * TOK, TOK, 4, TOK,
+                                     lut_idx=lut_e, op="softmax"))
             else:
                 def smx(ctx, s=s, p=p, lut=P[f"exp{l}"]):
                     sv = ctx.read(s)
@@ -168,8 +172,8 @@ class JepaExecutor(GraphExecutor):
             gg = h1 if vp else act(f"g{l}", TF)          # VPU: GELU in place (UB holds 64K rows)
             lin(f"fc1{l}", "fc1", h2, T, h1, TF, weights(f"w_fc1{l}", P[f"fc1{l}"]["w"]), P[f"fc1{l}"])
             if vp:
-                lut_g = const(f"lut_gelu{l}", vpu.lut_rows(P[f"gelu{l}"]), (vpu.LUT_ROWS, 16))
-                steps.append(Vec(f"gelu{l}", vpu.F_LUT, h1, 0, h1, 0, M, TF, M, lut=lut_g, op="gelu"))
+                steps.append(Vec(f"gelu{l}", vpu.V_LUT, h1, 0, h1, 0, M, TF, M,
+                                 lut_idx=vpu.lut_idx(vpu.LUT_GELU, l, L), op="gelu"))
             else:
                 def gelu(ctx, h1=h1, gg=gg, lut=P[f"gelu{l}"]):
                     hv = ctx.read(h1)

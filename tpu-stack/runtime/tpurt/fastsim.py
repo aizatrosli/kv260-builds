@@ -5,7 +5,7 @@ hazard bookkeeping protocol; replaces the per-element Python loops of MATMUL / A
 numpy (UB, ACC and weight tiles become arrays; hazard sets become interval lists).  Bit-exactness
 against the unmodified CoreSim is checked in tests/test_fastsim.py on random programs.
 
-Also implements the PROVISIONAL VECTOR opcode (tpurt/vpu.py) when vpu=True.
+Also implements the vector-unit extension ops X_VEC / X_LUT / X_VCFG (tpurt/vpu.py) when vpu=True.
 
 DDR access: either `mem` (an object with read(addr, n) -> uint8 array and write(addr, data)) or a
 tpuv1-style byte dict `ddr` (what tpu_mock passes), so it can stand in for CoreSim inside tpu_mock.
@@ -48,7 +48,7 @@ class DictMem:
 
 class FastCoreSim(isasim.CoreSim):
     def __init__(self, ub_init=None, wwords=None, check_hazards=True, enable_dma=False, ddr=None, mem=None,
-                 vpu_enabled=False):
+                 vpu_enabled=False, lut_rom=None):
         super().__init__(None, wwords, check_hazards, enable_dma, ddr)
         self.ubA = np.zeros((isasim.UB_ROWS, N), np.int8)
         self.ubV = np.zeros(isasim.UB_ROWS, bool)
@@ -67,6 +67,7 @@ class FastCoreSim(isasim.CoreSim):
         self.vpu_mult = (0, 0)
         self.lut_exp = np.zeros(256, np.int64)
         self.lut_gelu = np.zeros(256, np.int64)
+        self.lut_rom = lut_rom or {}
         self.mat_ub_rd, self.mat_acc_wr, self.act_acc_rd, self.act_ub_wr = [], [], [], []
         self.cycles = dict(matmul=0, w_load=0, activate=0, dma=0, vector=0, other=0)
 
@@ -92,27 +93,27 @@ class FastCoreSim(isasim.CoreSim):
         return b.reshape(N, N)[::-1].astype(np.int64)    # word t = W[15 - t]
 
     # ------------------------------------------------------------------ decode extensions (VPU)
-    def _target_ok(self, t):
-        if self.vpu and t == vpu.VPU_MULT:
-            return True
-        return isasim.CoreSim._target_ok(t)
-
-    def _set_config(self, t, v):
-        if self.vpu and t == vpu.VPU_MULT:
-            self.vpu_mult = vpu.mult_decode(v)
-            return
-        super()._set_config(t, v)
-
     def step(self, word):
-        if self.vpu and (word & 0xFF) == vpu.OP_VECTOR and not (self.halted or self.cfg_err):
-            f = vpu.decode(word)
-            bad = self._vector_invalid(f)
+        if self.vpu and vpu.is_ext(word) and not (self.halted or self.cfg_err):
+            op, f = vpu.xdec(word)
+            bad = self._ext_invalid(word, op, f)
             if bad:
-                self.cfg_err, self.cfg_err_op, self.cfg_err_why = True, vpu.OP_VECTOR, bad
+                self.cfg_err, self.cfg_err_op, self.cfg_err_why = True, op, bad
                 return False
             self.instr_count += 1
-            self._sync(asm.U_ALL)                         # decoder waits for every unit first
-            self._vector(f)
+            if op == vpu.X_VCFG:
+                self.vpu_mult = (f["ma"], f["mb"])
+                return True
+            self._sync(asm.U_ALL)                         # sequencer waits for the core to go idle
+            if op == vpu.X_LUT:
+                t = vpu.rom_table(f["sel"], self.lut_rom[f["idx"]])
+                if f["sel"] == vpu.LUT_EXP:
+                    self.lut_exp = t
+                else:
+                    self.lut_gelu = t
+                self.cycles["vector"] += 256
+            else:
+                self._vector(f)
             return True
         return super().step(word)
 
@@ -187,49 +188,45 @@ class FastCoreSim(isasim.CoreSim):
         self.act_qsets.add(q)
         self.cycles["activate"] += rows
 
-    # ------------------------------------------------------------------ VPU (provisional)
-    def _vector_invalid(self, f):
-        if f["reserved"]:
-            return "VECTOR reserved bits set"
-        if f["func"] > vpu.F_LDG:
-            return f"VECTOR func {f['func']}"
-        if f["func"] in (vpu.F_LDE, vpu.F_LDG):
-            return None if f["ub_a"] + vpu.LUT_ROWS <= isasim.UB_ROWS else "VECTOR LUT rows overflow"
-        if f["count"] == 0 or f["chunks"] == 0:
-            return "VECTOR count/chunks == 0"
-        span = (f["chunks"] - 1) * f["stride"] + f["count"]
-        regs = ("ub_a", "ub_out", "ub_b") if f["func"] == vpu.F_ADD else ("ub_a", "ub_out")
-        if any(f[r] + span > isasim.UB_ROWS for r in regs):
-            return "VECTOR UB range overflow"
+    # ------------------------------------------------------------------ VPU (jepa_top extension)
+    def _ext_invalid(self, word, op, f):
+        if op not in (vpu.X_VEC, vpu.X_LUT, vpu.X_VCFG):
+            return f"{vpu.XNAMES[op]} is not supported by the runtime simulator"
+        if word & ~vpu.used_bits(op):
+            return f"{vpu.XNAMES[op]} reserved bits set"
+        if op == vpu.X_LUT:
+            return None if f["idx"] in self.lut_rom else f"X_LUT idx {f['idx']} not in LUT ROM"
+        if op == vpu.X_VEC:
+            if f["count"] == 0 or f["rows"] == 0:
+                return "X_VEC count/rows == 0"
+            span = (f["rows"] - 1) * f["rstride"] + (f["count"] - 1) * f["vstride"] + 1
+            regs = ("a", "o", "b") if f["op"] == vpu.V_ADD else ("a", "o")
+            if any(f[r] + span > isasim.UB_ROWS for r in regs):
+                return "X_VEC UB range overflow"
         return None
 
+    def _rows(self, base, f):
+        return base + np.arange(f["rows"])[:, None] * f["rstride"] + np.arange(f["count"])[None, :] * f["vstride"]
+
     def _gather(self, base, f):
-        idx = base + np.arange(f["chunks"])[:, None] * f["stride"] + np.arange(f["count"])[None, :]
+        idx = self._rows(base, f)
         if not self.ubV[idx].all():
-            raise RuntimeError("VECTOR reads uninitialised UB rows")
-        return self.ubA[idx], idx                         # [chunks, count, 16]
+            raise RuntimeError("X_VEC reads uninitialised UB rows")
+        return self.ubA[idx], idx                         # [rows, count, 16]
 
     def _vector(self, f):
-        fn = f["func"]
-        if fn in (vpu.F_LDE, vpu.F_LDG):
-            rows = self.ubA[f["ub_a"]:f["ub_a"] + vpu.LUT_ROWS]
-            if fn == vpu.F_LDE:
-                self.lut_exp = vpu.lut_from_rows(rows, signed=False)
-            else:
-                self.lut_gelu = vpu.lut_from_rows(rows, signed=True)
-            self.cycles["vector"] += vpu.LUT_ROWS
-            return
-        a, _ = self._gather(f["ub_a"], f)
-        if fn == vpu.F_ADD:
-            b, _ = self._gather(f["ub_b"], f)
+        fn = f["op"]
+        a, _ = self._gather(f["a"], f)
+        if fn == vpu.V_ADD:
+            b, _ = self._gather(f["b"], f)
             y = _ops.ew_add(a, b, *self.vpu_mult)
-        elif fn == vpu.F_LUT:
+        elif fn == vpu.V_LUT:
             y = _ops.lut8(a, self.lut_gelu)
-        elif fn == vpu.F_LN:
+        elif fn == vpu.V_LN:
             y = _ops.layernorm(np.ascontiguousarray(a))
         else:
             y = _ops.softmax(np.ascontiguousarray(a)[None], self.lut_exp)[0]
-        oidx = f["ub_out"] + np.arange(f["chunks"])[:, None] * f["stride"] + np.arange(f["count"])[None, :]
+        oidx = self._rows(f["o"], f)
         self.ubA[oidx] = y
         self.ubV[oidx] = True
-        self.cycles["vector"] += f["count"] * f["chunks"] * (2 if fn in (vpu.F_LN, vpu.F_SM) else 1)
+        self.cycles["vector"] += f["count"] * f["rows"] * (2 if fn in (vpu.V_LN, vpu.V_SM) else 1)

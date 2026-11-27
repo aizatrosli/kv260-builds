@@ -110,7 +110,7 @@ class BoardBackend(TpuDeviceBackend):
             raise BackendUnavailable(f"board backend: cannot open {path}: {e}") from None
         super().__init__(dev, "board")
         hv = self._info.hw_version
-        self.has_vpu = (hv >> 8) >= 6 or bool(os.environ.get("TPURT_ASSUME_VPU"))   # provisional: VPU image >= 0x600
+        self.has_vpu = (hv >> 8) >= 6 or bool(os.environ.get("TPURT_ASSUME_VPU"))   # assumption: VPU image reports version >= 0x600 (not yet defined by the RTL)
 
 
 class MockBackend(TpuDeviceBackend):
@@ -122,9 +122,11 @@ class MockBackend(TpuDeviceBackend):
         if fast:
             from .. import fastsim
 
+            owner = self
+
             class _Sim(fastsim.FastCoreSim):
                 def __init__(self, *a, **k):
-                    super().__init__(*a, vpu_enabled=vpu, **k)
+                    super().__init__(*a, vpu_enabled=vpu, lut_rom=owner.lut_rom, **k)
             # tpu_mock resolves `isasim.CoreSim` at run time; give it the accelerated subclass
             # (module-level swap, inside this process only; tpuv1 sources are untouched).
             tpu_mock.isasim = types.SimpleNamespace(CoreSim=_Sim)

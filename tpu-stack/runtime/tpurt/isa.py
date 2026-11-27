@@ -1,5 +1,5 @@
 """Instruction encoders: tpuv1's own board-safe software/runtime/tpu_isa.py (re-exported), plus the
-provisional VECTOR opcode of the future VPU (see tpurt/vpu.py)."""
+vector-unit extension ops X_VEC/X_LUT/X_VCFG of jepa_top (see tpurt/vpu.py)."""
 from . import _paths
 
 _paths.need_tpuv1_runtime()

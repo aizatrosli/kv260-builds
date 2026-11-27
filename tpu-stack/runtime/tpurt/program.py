@@ -74,7 +74,7 @@ class Gemm:
 @dataclass(eq=False)
 class Vec:
     name: str
-    func: int                 # vpu.F_ADD / F_LUT / F_LN / F_SM
+    func: int                 # vpu.V_ADD / V_LUT / V_LN / V_SM
     a: Tensor
     a_off: int
     out: Tensor
@@ -85,11 +85,11 @@ class Vec:
     b: Optional[Tensor] = None
     b_off: int = 0
     mult: tuple = (0, 0)
-    lut: Optional[Tensor] = None
+    lut_idx: Optional[int] = None    # LUT-ROM table for V_SM / V_LUT
     op: str = ""
 
     def reads(self):
-        return [t for t in (self.a, self.b, self.lut) if t is not None]
+        return [t for t in (self.a, self.b) if t is not None]
 
     def writes(self):
         return [self.out]
@@ -164,7 +164,7 @@ class Program:
         import asm
         out = []
         for i, w in enumerate(self.words):
-            out.append(f"{i:5d} {vpu.FUNC_NAMES[(w >> 8) & 15].upper() + ' (VECTOR)' if w & 255 == vpu.OP_VECTOR else asm.disasm(w)}")
+            out.append(f"{i:5d} {vpu.disasm(w) if vpu.is_ext(w) else asm.disasm(w)}")
         return "\n".join(out)
 
 
@@ -304,27 +304,25 @@ class ProgramBuilder:
             self.act_written.append((ob + o0, ob + o0 + g.m))
             self.tile_idx += 1
 
-    # ---- VECTOR (provisional VPU) --------------------------------------------------------------
+    # ---- vector unit (sequencer extension X_VEC / X_LUT / X_VCFG) ----------------------------------
     def _vec(self, v):
         span = (v.chunks - 1) * v.stride + v.count
         needs = [(v.a, v.a_off, v.a_off + span)]
-        if v.func == vpu.F_ADD:
+        if v.func == vpu.V_ADD:
             needs.append((v.b, v.b_off, v.b_off + span))
-        if v.func in (vpu.F_SM, vpu.F_LUT):
-            ld = vpu.F_LDE if v.func == vpu.F_SM else vpu.F_LDG
-            if self.lut_loaded.get(ld) is not v.lut:
-                self._ensure([(v.lut, 0, v.lut.rows)])
-                self._sync(isa.U_ALL)
-                self._emit(vpu.vector(ld, self.ub_base[v.lut]))
-                self.lut_loaded[ld] = v.lut
         self._ensure(needs)
         self._sync(isa.U_ALL)
-        if v.func == vpu.F_ADD and self.vpu_mult != tuple(v.mult):
-            self._emit(isa.set_config(vpu.VPU_MULT, vpu.mult_value(*v.mult)))
+        if v.func in vpu.LUT_OF_OP:
+            sel = vpu.LUT_OF_OP[v.func]
+            if self.lut_loaded.get(sel) != v.lut_idx:
+                self._emit(vpu.lut(sel, v.lut_idx))
+                self.lut_loaded[sel] = v.lut_idx
+        if v.func == vpu.V_ADD and self.vpu_mult != tuple(v.mult):
+            self._emit(vpu.vcfg(*v.mult))
             self.vpu_mult = tuple(v.mult)
         ob = self._alloc(v.out)
-        self._emit(vpu.vector(v.func, self.ub_base[v.a] + v.a_off, ob + v.o_off, v.count, v.chunks, v.stride,
-                              self.ub_base[v.b] + v.b_off if v.b is not None else 0))
+        self._emit(vpu.vec(v.func, v.chunks, self.ub_base[v.a] + v.a_off, ob + v.o_off, v.count, v.stride, 1,
+                           self.ub_base[v.b] + v.b_off if v.b is not None else 0))
         rows = (v.o_off + np.arange(v.chunks)[:, None] * v.stride + np.arange(v.count)[None, :]).ravel()
         self._produce(v.out, rows)
 

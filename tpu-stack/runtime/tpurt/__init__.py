@@ -7,7 +7,7 @@
   hostops    bit-exact LayerNorm / softmax / GELU / residual (C + numpy)  (tpurt.hostops)
   jepa       JepaExecutor: end-to-end I-JEPA encoder                      (tpurt.jepa)
   profiler   per-op host/device timing                                    (tpurt.profiler)
-  vpu        provisional VECTOR-opcode encoding for the future VPU        (tpurt.vpu)
+  vpu        jepa_top sequencer extension (X_VEC/X_LUT/X_VCFG) encoding     (tpurt.vpu)
 
 CLIs:  python -m tpurt.bench --help        board_smoke.py --help
 """
