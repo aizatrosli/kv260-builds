@@ -1,0 +1,8 @@
+prog 742
+wrom 74368
+prom 7684
+lrom 3072
+in_rows 64
+out_base 7488
+out_rows 512
+ub_rows 8000

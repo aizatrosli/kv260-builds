@@ -8,7 +8,9 @@
 //           out = sat8(((D*a - S)*32*inv + 2^23) >>> 24)                    (LayerNorm, no affine)
 //   OP_SM   m=max a, e=exp_lut[m-a], Z=sum e, inv=(127<<22)/Z,
 //           out = (e*inv + 2^21) >> 22                                       (softmax -> 0..127)
-// Flow: command, then `rows` input rows (in_a, and in_b for ADD), then `rows` output rows.
+// Flow: command, then `rows` input rows (in_a, and in_b for ADD); `rows` output rows follow.
+// Two stages with two vector buffers: the next command and its rows are accepted while the
+// previous vector is still in sqrt/divide/emit (cmd_ready/in_ready reflect the front stage).
 // LUTs are written through the lut_* port, or pre-loaded from hex files (hard-coded model).
 `timescale 1ns/1ps
 
@@ -46,9 +48,6 @@ module vpu #(
   localparam logic [1:0] OP_ADD = 2'd0, OP_LUT = 2'd1, OP_LN = 2'd2, OP_SM = 2'd3;
   localparam int unsigned RW = $clog2(MAXR+1);
 
-  typedef enum logic [2:0] {S_IDLE, S_LOAD, S_EXPSUM, S_SQRT, S_DIV, S_EMIT} state_e;
-  state_e st;
-
   logic [15:0] exp_lut  [256];
   logic [7:0]  gelu_lut [256];
   initial begin
@@ -60,30 +59,25 @@ module vpu #(
     else           exp_lut[lut_addr_i]  <= lut_wdata_i;
   end
 
-  logic [1:0]           op;
-  logic [RW-1:0]        rows, cnt;
-  logic signed [17:0]   ma, mb;
-  logic [N*8-1:0]       buf8  [MAXR];        // stored input / finished int8 output
-  logic [N*16-1:0]      buf16 [MAXR];        // softmax: exp values
-
-  // statistics
-  logic signed [31:0]   S;                   // sum a        (|S| <= MAXR*N*128)
-  logic [31:0]          Sq;                  // sum a^2
-  logic signed [7:0]    mx;                  // running max
-  logic [31:0]          Z;                   // sum e
-  logic [63:0]          inv;                 // reciprocal result
-
-  // iterative isqrt / divider
-  logic [63:0] rem, rad, root, bitv;
-  logic [63:0] num, den, quo;
-  logic [6:0]  it;
-
-  // ---------------- per-row combinational lanes ----------------
   function automatic logic signed [7:0] sat8(input logic signed [63:0] v);
     return (v > 127) ? 8'sd127 : (v < -128) ? -8'sd128 : v[7:0];
   endfunction
 
-  logic [N*8-1:0]  add_row, lut_row, emit_row;
+  logic [N*8-1:0]  buf8 [2][MAXR];           // two vector buffers (input, or finished ADD/LUT output)
+  logic [N*16-1:0] buf16 [MAXR];             // softmax exps (back stage only)
+
+  // ================= front stage: command + row load + statistics =================
+  typedef enum logic [1:0] {F_IDLE, F_LOAD, F_HAND} fst_e;
+  fst_e fs;
+  logic               wsel;
+  logic [1:0]         f_op;
+  logic [RW-1:0]      f_rows, cnt;
+  logic signed [17:0] ma, mb;
+  logic signed [31:0] fS;
+  logic [31:0]        fSq;
+  logic signed [7:0]  fmx;
+
+  logic [N*8-1:0]  add_row, lut_row;
   logic signed [31:0] row_sum;
   logic [31:0]        row_sq;
   logic signed [7:0]  row_max;
@@ -100,121 +94,146 @@ module vpu #(
     end
   end
 
-  // exp stage: row of logits -> row of exps
-  logic [RW-1:0]  xr;                     // row index for EXPSUM / EMIT
+  // ================= back stage: reductions, sqrt, divide, emit =================
+  typedef enum logic [2:0] {B_IDLE, B_EXPSUM, B_SQRT, B_DIV, B_EMIT} bst_e;
+  bst_e bs;
+  logic               rsel;
+  logic [1:0]         op;
+  logic [RW-1:0]      rows, xr;
+  logic signed [31:0] S;
+  logic signed [7:0]  mx;
+  logic [31:0]        Z;
+  logic [63:0]        inv, rem, rad, root, bitv, num, den, quo;
+  logic [6:0]         it;
+  wire                hand = (fs == F_HAND) && (bs == B_IDLE);
+
   logic [N*16-1:0] exp_row;
   logic [31:0]     exp_sum;
   always_comb begin
     exp_sum = '0;
     for (int i = 0; i < N; i++) begin
       logic signed [8:0] d;
-      d = 9'(mx) - 9'($signed(buf8[xr][8*i +: 8]));
+      d = 9'(mx) - 9'($signed(buf8[rsel][xr][8*i +: 8]));
       exp_row[16*i +: 16] = exp_lut[d[7:0]];
       exp_sum += 32'(exp_lut[d[7:0]]);
     end
   end
 
-  // emit stage
-  logic [31:0] Dlanes;
+  logic [N*8-1:0] emit_row;
+  logic [31:0]    Dlanes;
   assign Dlanes = 32'(rows) * N;
   always_comb begin
     for (int i = 0; i < N; i++) begin
       logic signed [63:0] d, v;
       logic [63:0] e;
-      d = 64'(Dlanes) * 64'($signed(buf8[xr][8*i +: 8])) - 64'(S);
+      d = 64'(Dlanes) * 64'($signed(buf8[rsel][xr][8*i +: 8])) - 64'(S);
       v = d * 32 * $signed(inv) + 64'sd8388608;
       e = 64'(buf16[xr][16*i +: 16]) * inv + 64'd2097152;
       case (op)
         OP_LN:   emit_row[8*i +: 8] = sat8(v >>> 24);
         OP_SM:   emit_row[8*i +: 8] = 8'(e >> 22);
-        default: emit_row[8*i +: 8] = buf8[xr][8*i +: 8];
+        default: emit_row[8*i +: 8] = buf8[rsel][xr][8*i +: 8];
       endcase
     end
   end
 
-  assign cmd_ready_o = (st == S_IDLE);
-  assign in_ready_o  = (st == S_LOAD);
-  assign out_valid_o = (st == S_EMIT);
+  assign cmd_ready_o = (fs == F_IDLE);
+  assign in_ready_o  = (fs == F_LOAD);
+  assign out_valid_o = (bs == B_EMIT);
   assign out_data_o  = emit_row;
-  assign busy_o      = (st != S_IDLE);
+  assign busy_o      = (fs != F_IDLE) || (bs != B_IDLE);
 
   always_ff @(posedge clk_i or negedge rst_ni) begin
     if (!rst_ni) begin
-      st <= S_IDLE; cnt <= '0; xr <= '0; op <= '0; rows <= '0; ma <= '0; mb <= '0;
-      S <= '0; Sq <= '0; mx <= '0; Z <= '0; inv <= '0;
-      rem <= '0; rad <= '0; root <= '0; bitv <= '0; num <= '0; den <= '0; quo <= '0; it <= '0;
+      fs <= F_IDLE; wsel <= 1'b0; f_op <= '0; f_rows <= '0; cnt <= '0; ma <= '0; mb <= '0;
+      fS <= '0; fSq <= '0; fmx <= '0;
+      bs <= B_IDLE; rsel <= 1'b0; op <= '0; rows <= '0; xr <= '0; S <= '0; mx <= '0; Z <= '0;
+      inv <= '0; rem <= '0; rad <= '0; root <= '0; bitv <= '0; num <= '0; den <= '0; quo <= '0; it <= '0;
     end else begin
-      case (st)
-        S_IDLE: if (cmd_valid_i) begin
-          op <= cmd_op_i; rows <= cmd_rows_i; ma <= cmd_ma_i; mb <= cmd_mb_i;
-          cnt <= '0; S <= '0; Sq <= '0; mx <= -8'sd128; Z <= '0;
-          st <= S_LOAD;
+      // ---------------- front
+      case (fs)
+        F_IDLE: if (cmd_valid_i) begin
+          f_op <= cmd_op_i; f_rows <= cmd_rows_i; ma <= cmd_ma_i; mb <= cmd_mb_i;
+          cnt <= '0; fS <= '0; fSq <= '0; fmx <= -8'sd128; fs <= F_LOAD;
         end
-        S_LOAD: if (in_valid_i) begin
-          case (op)
-            OP_ADD:  buf8[cnt] <= add_row;
-            OP_LUT:  buf8[cnt] <= lut_row;
-            default: buf8[cnt] <= in_a_i;
+        F_LOAD: if (in_valid_i) begin
+          case (f_op)
+            OP_ADD:  buf8[wsel][cnt] <= add_row;
+            OP_LUT:  buf8[wsel][cnt] <= lut_row;
+            default: buf8[wsel][cnt] <= in_a_i;
           endcase
-          S  <= S + row_sum;
-          Sq <= Sq + row_sq;
-          if (row_max > mx) mx <= row_max;
+          fS <= fS + row_sum; fSq <= fSq + row_sq;
+          if (row_max > fmx) fmx <= row_max;
           cnt <= cnt + 1'b1;
-          if (cnt + 1'b1 == rows) begin
-            xr <= '0;
-            case (op)
-              OP_SM: st <= S_EXPSUM;
-              OP_LN: begin
-                // V = D*Sq - S^2 (S, Sq still missing this row: fold it in here)
-                rad  <= 64'(Dlanes) * 64'(Sq + row_sq) - 64'($signed(S + row_sum)) * 64'($signed(S + row_sum));
-                rem  <= '0; root <= '0; bitv <= 64'd1 << 40; st <= S_SQRT;
-              end
-              default: st <= S_EMIT;
-            endcase
-          end
+          if (cnt + 1'b1 == f_rows) fs <= F_HAND;
         end
-        S_EXPSUM: begin
+        F_HAND: if (hand) begin fs <= F_IDLE; wsel <= ~wsel; end
+        default: fs <= F_IDLE;
+      endcase
+      // ---------------- back
+      case (bs)
+        B_IDLE: if (hand) begin
+          rsel <= wsel; op <= f_op; rows <= f_rows; S <= fS; mx <= fmx; Z <= '0; xr <= '0;
+          case (f_op)
+            OP_SM: bs <= B_EXPSUM;
+            OP_LN: begin
+              rad <= 64'(32'(f_rows) * N) * 64'(fSq) - 64'(fS) * 64'(fS);
+              root <= '0; bitv <= 64'd1 << 32; bs <= B_SQRT;
+            end
+            default: bs <= B_EMIT;
+          endcase
+        end
+        B_EXPSUM: begin
           buf16[xr] <= exp_row;
           Z <= Z + exp_sum;
           xr <= xr + 1'b1;
           if (xr + 1'b1 == rows) begin
-            num <= 64'd127 << 22; den <= 64'(Z + exp_sum); quo <= '0; rem <= '0; it <= 7'd29;
-            st <= S_DIV;
+            num <= 64'd127 << 22; den <= 64'(Z + exp_sum); quo <= '0; rem <= 64'd127 << 8; it <= 7'd13;  // Z >= 2^15 -> q < 2^14
+            bs <= B_DIV;
           end
         end
-        S_SQRT: begin                           // bit-by-bit integer square root of rad
-          if (bitv == 0) begin
-            num <= 64'd1 << 24; den <= (root == 0) ? 64'd1 : root; quo <= '0; rem <= '0; it <= 7'd29;
-            st <= S_DIV;
+        B_SQRT: begin                           // integer square root, 2 result bits per cycle
+          logic [63:0] ra, oa, ba, rb, ob;
+          ra = rad; oa = root; ba = bitv;
+          if (ra >= oa + ba) begin ra = ra - (oa + ba); oa = (oa >> 1) + ba; end else oa = oa >> 1;
+          rb = ra; ob = oa;
+          if (ba > 1) begin
+            if (rb >= ob + (ba >> 2)) begin rb = rb - (ob + (ba >> 2)); ob = (ob >> 1) + (ba >> 2); end else ob = ob >> 1;
+          end
+          if (ba <= 4) begin
+            num <= 64'd1 << 24; den <= (ob == 0) ? 64'd1 : ob; quo <= '0; rem <= '0; it <= 7'd24;
+            bs <= B_DIV;
           end else begin
-            if (rad >= root + bitv) begin
-              rad  <= rad - (root + bitv);
-              root <= (root >> 1) + bitv;
-            end else begin
-              root <= root >> 1;
-            end
-            bitv <= bitv >> 2;
+            rad <= rb; root <= ob; bitv <= ba >> 4;
           end
         end
-        S_DIV: begin                            // restoring division, 1 bit per cycle
-          logic [64:0] r2;
-          r2 = {rem, num[it]};
-          if (r2 >= {1'b0, den}) begin
-            rem <= 64'(r2 - {1'b0, den}); quo <= quo | (64'd1 << it);
-          end else begin
-            rem <= r2[63:0];
-          end
+        B_DIV: begin                            // restoring division, 2 quotient bits per cycle
+          logic [64:0] ra, rb;
+          logic [63:0] rema, qa;
+          logic        ga, gb;
+          ra = {rem, num[it]};
+          ga = (ra >= {1'b0, den});
+          rema = ga ? 64'(ra - {1'b0, den}) : ra[63:0];
+          qa = quo | (64'(ga) << it);
           if (it == 0) begin
-            inv <= (r2 >= {1'b0, den}) ? (quo | 64'd1) : quo;
-            xr <= '0; st <= S_EMIT;
+            inv <= qa; xr <= '0; bs <= B_EMIT;
+          end else begin
+            rb = {rema, num[it - 1]};
+            gb = (rb >= {1'b0, den});
+            if (it == 1) begin
+              inv <= qa | 64'(gb); xr <= '0; bs <= B_EMIT;
+            end else begin
+              rem <= gb ? 64'(rb - {1'b0, den}) : rb[63:0];
+              quo <= qa | (64'(gb) << (it - 1));
+              it  <= it - 2;
+            end
           end
-          it <= it - 1'b1;
         end
-        S_EMIT: if (out_ready_i) begin
+        B_EMIT: if (out_ready_i) begin
           xr <= xr + 1'b1;
-          if (xr + 1'b1 == rows) st <= S_IDLE;
+          if (xr + 1'b1 == rows) bs <= B_IDLE;
         end
-        default: st <= S_IDLE;
+        default: bs <= B_IDLE;
       endcase
     end
   end

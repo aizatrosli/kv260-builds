@@ -17,3 +17,6 @@ $VL $VFLAGS --top-module tb_vpu -Mdir build/obj_vpu rtl/vpu.sv tb/tb_vpu.sv >/de
 ./build/obj_vpu/Vtb_vpu +VEC=build/vpu | grep -E "tb_vpu:|VPU_"
 $VL $VFLAGS --top-module tb_tpu_core_rom -Mdir build/obj_rom $INC rtl/rom_stream.sv tb/tb_tpu_core_rom.sv >/dev/null
 (cd "$TPU" && "$J/build/obj_rom/Vtb_tpu_core_rom" +CASES=build/jepa/cases/cases.txt | grep -E "passed|_PASS|FAIL")
+python3 compile_jepa.py --qmodel qmodel.npy --img 7 --out rom_e2e                # whole encoder -> one program + ROMs
+TPU="$TPU" DEPS="$DEPS" VL="$VL" ./build_e2e.sh >/dev/null
+./build/obj_e2e/Vtb_jepa_top +ROM=rom_e2e | grep -E "tb_jepa_top:|E2E"

@@ -71,13 +71,79 @@ The vector unit adds about 1.8 ms if it runs serially. The total is about 6 ms p
 
 **Memory if everything is hard-coded:** weights 1,154 KiB + position embedding 8 KiB + unrolled program 404 KiB = 12.8 Mb. That is right at the free on-chip RAM: the XCK26 has 23.6 Mb and tpuv1 already uses 10.8 Mb, mostly for its 1 MiB Unified Buffer. This model only needs about 64 KiB of activations.
 
-## 5. What tpuv1 still lacks, and the plan
+## 5. (first pass) What tpuv1 still lacked
 
 1. **Weights from UB.** Q·Kᵀ and P·V use activations as the "weights". tpuv1 only loads weights from the Weight FIFO. In simulation I streamed K/V tiles in as weights. On chip this needs a UB-to-weight-loader path, including a transpose for Kᵀ, and a `MATMUL` flag to select it.
 2. **Integrate the VPU.** Add a `VECTOR` opcode in `decoder.sv`, with UB read ports (2 rows/cycle for the add) and a write port. The `ACTIVATE.eltwise` field, already reserved, could carry the residual add. GELU can move into `activation_unit` as a LUT `func`; the sigmoid/tanh codes are reserved for this already.
 3. **Shrink the program.** It is 404 KiB because every 16-column tile repeats 33 `SET_CONFIG`s. Options are a requant-parameter ROM indexed by layer, or a small loop/sequencer, which would bring it to a few KiB. With that and a UB cut to 128 KiB, the design fits comfortably.
 4. **Full-chain test.** Write one program for the whole encoder, run from ROM after reset, and compare the final UB contents with PyTorch. Then synthesise in Vivado for timing and resources. The VPU's 16 lanes of 49-bit multiplies in the LayerNorm emit stage are the likely critical path, so register them.
 5. **Better model.** Train longer and/or on a richer dataset. Optionally keep the residual stream in int16 for headroom.
+
+## 6. End-to-end: the whole encoder from ROM, after reset (`jepa_top`)
+
+`rtl/jepa_top.sv` puts a **sequencer** in front of the *unmodified* tpuv1 `tpu_core`. It also holds the VPU and four ROMs: program, weights and data, requant parameters, and LUTs.
+
+After `run`, it executes one program to the end. The host only places the 32x32 image in the UB.
+
+`tb/tb_jepa_top.sv` wraps it with tpuv1's `tpu_fabric`, which provides the UB and ACC memories. It checks the encoder output in the UB against `compile_jepa.Machine`.
+
+**Results:**
+- The output is **bit-exact on test images 0, 3 and 7**.
+- Cosine similarity to PyTorch float is 0.998, 0.998 and 0.997 for those three images.
+- The machine model is tpuv1's own ISA simulator, with its hazard checker on, plus the extension ops.
+- It is asserted equal to `quantize.int_forward`.
+
+**Sequencer extension ops.** All have opcode >= 0x40, are decoded before tpuv1 sees them, and are encoded in `compile_jepa.py`.
+
+| op | does |
+|---|---|
+| `X_WROM n` | stream the next n weight-ROM words into the Weight FIFO (background) |
+| `X_WUB tr base stride kt nt` | UB activations -> Weight FIFO as tiles, with transpose: Kᵀ for Q·Kᵀ, V for P·V |
+| `X_MM q sync kt in acc out entry B` | one output tile: [SYNC], kt x MATMUL, 33 SET_CONFIGs from the param ROM, SYNC, ACTIVATE |
+| `X_VEC op rows a b o count rstride vstride` | run `count` LayerNorm / softmax / GELU / residual-add jobs over UB vectors |
+| `X_LUT`, `X_VCFG`, `X_UBROM`, `X_LOADQ` | load a VPU LUT, set add multipliers, copy ROM -> UB (position embedding), load one requant set |
+
+Ops that touch the UB wait for the core to drain, then own the UB ports. Everything else streams beside the core.
+
+**Optimisation steps (cycles at 100 MHz, every step still bit-exact):**
+
+| step | cycles | time | change |
+|---|---|---|---|
+| first working version | 812,332 | 8.12 ms | |
+| vector unit: streamed UB reads, 2-bit/cycle divider and sqrt, shorter softmax divide | 579,476 | 5.79 ms | VPU 363k -> 130k cycles |
+| `X_MM` macro | 579,476 | 5.79 ms | program 111 KiB -> **12 KiB** (7,135 -> 742 instructions) |
+| matmuls before config, 4 ACC regions rotating with the 4 requant sets | 510,277 | 5.10 ms | SET_CONFIG and ACTIVATE now overlap the array; core sync stalls 75k -> 26k |
+| double-buffered VPU (next vector loads while the last one computes) | **466,352** | **4.66 ms** | VPU 130k -> 87k |
+
+At 4.66 ms the 16x16 array is busy 69% of the time; its floor is 320k cycles (3.2 ms). What remains:
+- about 87k cycles where the VPU and the core run one after the other;
+- 41k non-array core cycles;
+- 14k cycles of `X_WUB`.
+
+Next levers:
+- Overlap the VPU with the next matmul, for example softmax of head h with Q·Kᵀ of head h+1.
+- Pipeline `X_WUB`.
+- A 32x32 array. That is an ISA-level change in tpuv1, because rows are 16 bytes.
+
+**Memory for full hard-coding (from `compile_jepa.py`):**
+
+| contents | size |
+|---|---|
+| weight/data ROM | 1,162 KiB |
+| requant-param ROM | 68 KiB |
+| LUT ROM | 6 KiB |
+| program | 12 KiB |
+| **total** | **1,248 KiB (10.2 Mb)** |
+
+The UB working set is only 125 KiB, against tpuv1's 1 MiB UB.
+
+Important hardware catch: **UltraRAM cannot be initialised from the bitstream; only BRAM can.** The XCK26 has 144 BRAM36, about 5 Mb, and tpuv1 already uses 44 of them. So the 10 Mb of weights for this 1.2 M-param model cannot all be bitstream ROM. There are two ways to really hard-code it:
+- **(a) Load at boot.** Keep the weights in URAM and fill them once at boot, from QSPI flash or the boot image, using a small loader. There is still no per-inference host involvement.
+- **(b) Shrink the model** to about 300k params, for example dim 96 and 3 blocks, so it fits in the remaining ~100 BRAM36.
+
+Either way, shrink the UB to 128 KiB. That needs `UbRows` changed in tpuv1's `tpu_pkg`, and frees about 25 URAM.
+
+Also found while doing this: in this bench, under Verilator 5.038, the PULP xbar accepts an AXI W beat before its AW is routed, so host writes land one row off. tpuv1's own `tb_tpu_core` does not show it. `tb_jepa_top` therefore loads the image and reads the result through the UB memory backdoor. Worth checking on the board, or with another simulator, before trusting AXI host writes.
 
 ## Files
 
@@ -87,8 +153,11 @@ intops.py quantize.py      bit-exact integer spec + PTQ + accuracy vs float
 rtl_check.py               encoder matmuls -> tpuv1 test cases (via tpuv1 compiler + ISA sim)
 vpu_vectors.py             VPU job vectors from one inference
 export_rom.py              rom/weights.hex, rom/exp_l*.hex, rom/gelu_l*.hex + memory budget
+compile_jepa.py            whole-encoder compiler + Python machine model (ISA sim + extension), ROM images
+rtl/jepa_top.sv            sequencer + tpu_core + VPU + ROMs (the hard-coded encoder)
 rtl/vpu.sv rtl/rom_stream.sv
-tb/tb_vpu.sv tb/tb_tpu_core_rom.sv
+tb/tb_vpu.sv tb/tb_tpu_core_rom.sv tb/tb_jepa_top.sv
+build_e2e.sh               Verilator build of tb_jepa_top
 run_all.sh                 reproduces everything
 ckpt.pt qmodel.npy rom/    trained checkpoint, quantised model, ROM init files
 ```
