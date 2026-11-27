@@ -5,3 +5,4 @@ __pycache__/
 quant/data/
 quant/results/**/weights.npz
 perfmodel/out/dse.csv
+.pycache/
