@@ -1,0 +1,5868 @@
+{
+ "format": "tpuquant-graph",
+ "version": 1,
+ "name": "jepa_encoder",
+ "arith": {
+  "requant": "tflite_double_rounding (tpuv1 tflite_int8.py)",
+  "input_rounding": "round_half_to_even",
+  "constants": {
+   "LN_Q": 32,
+   "LN_K": 24,
+   "SM_K": 22,
+   "SM_OUT": 127,
+   "EXP_ONE": 32768,
+   "EW_SH": 16
+  }
+ },
+ "inputs": [
+  {
+   "name": "img",
+   "shape": [
+    "N",
+    1,
+    32,
+    32
+   ],
+   "dtype": "float32"
+  }
+ ],
+ "outputs": [
+  {
+   "name": "ln_norm",
+   "post": {
+    "scale": {
+     "key": "output/ln_norm/post_scale",
+     "dtype": "float64",
+     "shape": [
+      128
+     ]
+    },
+    "bias": {
+     "key": "output/ln_norm/post_bias",
+     "dtype": "float64",
+     "shape": [
+      128
+     ]
+    }
+   }
+  }
+ ],
+ "tensors": {
+  "img": {
+   "shape": [
+    "N",
+    1,
+    32,
+    32
+   ],
+   "dtype": "float",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 1.0
+  },
+  "img_q": {
+   "shape": [
+    "N",
+    1,
+    32,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.02211037246124267
+  },
+  "view": {
+   "shape": [
+    "N",
+    1,
+    8,
+    4,
+    8,
+    4
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.02211037246124267
+  },
+  "permute": {
+   "shape": [
+    "N",
+    8,
+    8,
+    1,
+    4,
+    4
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.02211037246124267
+  },
+  "reshape": {
+   "shape": [
+    "N",
+    64,
+    16
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.02211037246124267
+  },
+  "embed": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03345603463637768
+  },
+  "pos": {
+   "shape": [
+    1,
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.0012271864745728044
+  },
+  "add": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03328798871543539
+  },
+  "blocks_0_ln1_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_0_qkv": {
+   "shape": [
+    "N",
+    64,
+    384
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/blocks_0_qkv/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     384
+    ]
+   }
+  },
+  "view_1": {
+   "shape": [
+    "N",
+    64,
+    3,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/view_1/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     3,
+     1,
+     1
+    ]
+   }
+  },
+  "permute_1": {
+   "shape": [
+    3,
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/permute_1/scale",
+    "dtype": "float64",
+    "shape": [
+     3,
+     1,
+     1,
+     1,
+     1
+    ]
+   }
+  },
+  "getitem_7": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.017756032777691992
+  },
+  "getitem_8": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.017967931463820957
+  },
+  "getitem_9": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.019613828910655114
+  },
+  "transpose": {
+   "shape": [
+    "N",
+    4,
+    32,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.017967931463820957
+  },
+  "truediv": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.02205391835530549
+  },
+  "softmax": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    0,
+    127
+   ],
+   "scale": 0.001718213058419244
+  },
+  "matmul_1": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.015244946685263935
+  },
+  "transpose_1": {
+   "shape": [
+    "N",
+    64,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.015244946685263935
+  },
+  "reshape_1": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.015244946685263935
+  },
+  "blocks_0_proj": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.006399499544338691
+  },
+  "add_1": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.030413918975732264
+  },
+  "blocks_0_ln2_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_0_fc1": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.015488709917322437
+  },
+  "gelu": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -12,
+    127
+   ],
+   "scale": 0.014079100117385116
+  },
+  "blocks_0_fc2": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.007582282711536663
+  },
+  "add_2": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.02858602839041128
+  },
+  "blocks_1_ln1_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_1_qkv": {
+   "shape": [
+    "N",
+    64,
+    384
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/blocks_1_qkv/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     384
+    ]
+   }
+  },
+  "view_2": {
+   "shape": [
+    "N",
+    64,
+    3,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/view_2/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     3,
+     1,
+     1
+    ]
+   }
+  },
+  "permute_2": {
+   "shape": [
+    3,
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/permute_2/scale",
+    "dtype": "float64",
+    "shape": [
+     3,
+     1,
+     1,
+     1,
+     1
+    ]
+   }
+  },
+  "getitem_13": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.019881460992403083
+  },
+  "getitem_14": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.019768811180213005
+  },
+  "getitem_15": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01659521073396576
+  },
+  "transpose_2": {
+   "shape": [
+    "N",
+    4,
+    32,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.019768811180213005
+  },
+  "truediv_1": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.030448546428663063
+  },
+  "softmax_1": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    0,
+    127
+   ],
+   "scale": 0.0038314176245210726
+  },
+  "matmul_3": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.012057981238783842
+  },
+  "transpose_3": {
+   "shape": [
+    "N",
+    64,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.012057981238783842
+  },
+  "reshape_2": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.012057981238783842
+  },
+  "blocks_1_proj": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.006698475530998192
+  },
+  "add_3": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.028455546084040113
+  },
+  "blocks_1_ln2_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_1_fc1": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01596652423274657
+  },
+  "gelu_1": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -12,
+    127
+   ],
+   "scale": 0.014154953908114647
+  },
+  "blocks_1_fc2": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.007074171090793002
+  },
+  "add_4": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.030657470830518046
+  },
+  "blocks_2_ln1_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_2_qkv": {
+   "shape": [
+    "N",
+    64,
+    384
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/blocks_2_qkv/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     384
+    ]
+   }
+  },
+  "view_3": {
+   "shape": [
+    "N",
+    64,
+    3,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/view_3/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     3,
+     1,
+     1
+    ]
+   }
+  },
+  "permute_3": {
+   "shape": [
+    3,
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/permute_3/scale",
+    "dtype": "float64",
+    "shape": [
+     3,
+     1,
+     1,
+     1,
+     1
+    ]
+   }
+  },
+  "getitem_19": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.019170058536306902
+  },
+  "getitem_20": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.017003498895108025
+  },
+  "getitem_21": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.019709860436102126
+  },
+  "transpose_4": {
+   "shape": [
+    "N",
+    4,
+    32,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.017003498895108025
+  },
+  "truediv_2": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.030685361010052935
+  },
+  "softmax_2": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    0,
+    127
+   ],
+   "scale": 0.003787878787878788
+  },
+  "matmul_5": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.013507397651332747
+  },
+  "transpose_5": {
+   "shape": [
+    "N",
+    64,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.013507397651332747
+  },
+  "reshape_3": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.013507397651332747
+  },
+  "blocks_2_proj": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.008019800697323717
+  },
+  "add_5": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.0310278829650734
+  },
+  "blocks_2_ln2_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_2_fc1": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01600898483172823
+  },
+  "gelu_2": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -12,
+    127
+   ],
+   "scale": 0.014631782262763862
+  },
+  "blocks_2_fc2": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.007157135285702136
+  },
+  "add_6": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03320441928845865
+  },
+  "blocks_3_ln1_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_3_qkv": {
+   "shape": [
+    "N",
+    64,
+    384
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/blocks_3_qkv/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     384
+    ]
+   }
+  },
+  "view_4": {
+   "shape": [
+    "N",
+    64,
+    3,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/view_4/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     3,
+     1,
+     1
+    ]
+   }
+  },
+  "permute_4": {
+   "shape": [
+    3,
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/permute_4/scale",
+    "dtype": "float64",
+    "shape": [
+     3,
+     1,
+     1,
+     1,
+     1
+    ]
+   }
+  },
+  "getitem_25": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.018399815872964288
+  },
+  "getitem_26": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.018614727324954183
+  },
+  "getitem_27": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01653124794510788
+  },
+  "transpose_6": {
+   "shape": [
+    "N",
+    4,
+    32,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.018614727324954183
+  },
+  "truediv_3": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03923389002523353
+  },
+  "softmax_3": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    0,
+    127
+   ],
+   "scale": 0.004347826086956522
+  },
+  "matmul_7": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01351932275942883
+  },
+  "transpose_7": {
+   "shape": [
+    "N",
+    64,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01351932275942883
+  },
+  "reshape_4": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01351932275942883
+  },
+  "blocks_3_proj": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.008567488835477075
+  },
+  "add_7": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.036150421853050965
+  },
+  "blocks_3_ln2_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_3_fc1": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.016071900059933173
+  },
+  "gelu_3": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -11,
+    127
+   ],
+   "scale": 0.014965861188838513
+  },
+  "blocks_3_fc2": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.006533004463376966
+  },
+  "add_8": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.040755960356706644
+  },
+  "blocks_4_ln1_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_4_qkv": {
+   "shape": [
+    "N",
+    64,
+    384
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/blocks_4_qkv/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     384
+    ]
+   }
+  },
+  "view_5": {
+   "shape": [
+    "N",
+    64,
+    3,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/view_5/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     3,
+     1,
+     1
+    ]
+   }
+  },
+  "permute_5": {
+   "shape": [
+    3,
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/permute_5/scale",
+    "dtype": "float64",
+    "shape": [
+     3,
+     1,
+     1,
+     1,
+     1
+    ]
+   }
+  },
+  "getitem_31": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.020174265023400067
+  },
+  "getitem_32": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.015917258586116773
+  },
+  "getitem_33": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.015237774287819913
+  },
+  "transpose_8": {
+   "shape": [
+    "N",
+    4,
+    32,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.015917258586116773
+  },
+  "truediv_4": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.029335811575594988
+  },
+  "softmax_4": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    0,
+    127
+   ],
+   "scale": 0.003484320557491289
+  },
+  "matmul_9": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.011753090552542577
+  },
+  "transpose_9": {
+   "shape": [
+    "N",
+    64,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.011753090552542577
+  },
+  "reshape_5": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.011753090552542577
+  },
+  "blocks_4_proj": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.007979130183627333
+  },
+  "add_9": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.04696565586335817
+  },
+  "blocks_4_ln2_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_4_fc1": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01775174560259335
+  },
+  "gelu_4": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -11,
+    127
+   ],
+   "scale": 0.015413511059307133
+  },
+  "blocks_4_fc2": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.006751266209008371
+  },
+  "add_10": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.0503558328068403
+  },
+  "blocks_5_ln1_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_5_qkv": {
+   "shape": [
+    "N",
+    64,
+    384
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/blocks_5_qkv/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     384
+    ]
+   }
+  },
+  "view_6": {
+   "shape": [
+    "N",
+    64,
+    3,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/view_6/scale",
+    "dtype": "float64",
+    "shape": [
+     1,
+     1,
+     3,
+     1,
+     1
+    ]
+   }
+  },
+  "permute_6": {
+   "shape": [
+    3,
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": {
+    "key": "tensor/permute_6/scale",
+    "dtype": "float64",
+    "shape": [
+     3,
+     1,
+     1,
+     1,
+     1
+    ]
+   }
+  },
+  "getitem_37": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.020591675110227043
+  },
+  "getitem_38": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01882878545531227
+  },
+  "getitem_39": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.014271986975081384
+  },
+  "transpose_10": {
+   "shape": [
+    "N",
+    4,
+    32,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.01882878545531227
+  },
+  "truediv_5": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03831829045309715
+  },
+  "softmax_5": {
+   "shape": [
+    "N",
+    4,
+    64,
+    64
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    0,
+    127
+   ],
+   "scale": 0.0055248618784530384
+  },
+  "matmul_11": {
+   "shape": [
+    "N",
+    4,
+    64,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.012260935382301899
+  },
+  "transpose_11": {
+   "shape": [
+    "N",
+    64,
+    4,
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.012260935382301899
+  },
+  "reshape_6": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.012260935382301899
+  },
+  "blocks_5_proj": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.007363885503601453
+  },
+  "add_11": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.04771439462837663
+  },
+  "blocks_5_ln2_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "blocks_5_fc1": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.016553960916092535
+  },
+  "gelu_5": {
+   "shape": [
+    "N",
+    64,
+    512
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -12,
+    127
+   ],
+   "scale": 0.014061035967663714
+  },
+  "blocks_5_fc2": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.006517419391300465
+  },
+  "add_12": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.04967190989618585
+  },
+  "ln_norm": {
+   "shape": [
+    "N",
+    64,
+    128
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  }
+ },
+ "nodes": [
+  {
+   "name": "img_q",
+   "op": "quantize",
+   "inputs": [
+    "img"
+   ],
+   "output": "img_q",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "view",
+   "op": "reshape",
+   "inputs": [
+    "img_q"
+   ],
+   "output": "view",
+   "attrs": {
+    "shape": [
+     "N",
+     1,
+     8,
+     4,
+     8,
+     4
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "permute",
+   "op": "permute",
+   "inputs": [
+    "view"
+   ],
+   "output": "permute",
+   "attrs": {
+    "perm": [
+     0,
+     2,
+     4,
+     1,
+     3,
+     5
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "reshape",
+   "op": "reshape",
+   "inputs": [
+    "permute"
+   ],
+   "output": "reshape",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     16
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "embed",
+   "op": "linear",
+   "inputs": [
+    "reshape"
+   ],
+   "output": "embed",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 8,
+    "weight_scheme": "channel"
+   },
+   "params": {
+    "w": {
+     "key": "embed/w",
+     "dtype": "int8",
+     "shape": [
+      16,
+      128
+     ]
+    },
+    "bias": {
+     "key": "embed/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "embed/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "embed/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "embed/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    }
+   }
+  },
+  {
+   "name": "pos",
+   "op": "const",
+   "inputs": [],
+   "output": "pos",
+   "attrs": {},
+   "params": {
+    "value": {
+     "key": "pos/value",
+     "dtype": "int8",
+     "shape": [
+      1,
+      64,
+      128
+     ]
+    }
+   }
+  },
+  {
+   "name": "add",
+   "op": "add",
+   "inputs": [
+    "embed",
+    "pos"
+   ],
+   "output": "add",
+   "attrs": {
+    "ma": 65867,
+    "mb": 2416,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_0_ln1_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add"
+   ],
+   "output": "blocks_0_ln1_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_0_qkv",
+   "op": "linear",
+   "inputs": [
+    "blocks_0_ln1_norm"
+   ],
+   "output": "blocks_0_qkv",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_0_qkv/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "bias": {
+     "key": "blocks_0_qkv/bias",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "m0": {
+     "key": "blocks_0_qkv/m0",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "shift": {
+     "key": "blocks_0_qkv/shift",
+     "dtype": "int8",
+     "shape": [
+      384
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_0_qkv/w_scale",
+     "dtype": "float32",
+     "shape": [
+      384
+     ]
+    },
+    "w4": {
+     "key": "blocks_0_qkv/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "gmul": {
+     "key": "blocks_0_qkv/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      384
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_0_qkv/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      192
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_0_qkv/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      192
+     ]
+    }
+   }
+  },
+  {
+   "name": "view_1",
+   "op": "reshape",
+   "inputs": [
+    "blocks_0_qkv"
+   ],
+   "output": "view_1",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     3,
+     4,
+     32
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "permute_1",
+   "op": "permute",
+   "inputs": [
+    "view_1"
+   ],
+   "output": "permute_1",
+   "attrs": {
+    "perm": [
+     2,
+     0,
+     3,
+     1,
+     4
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_7",
+   "op": "getitem",
+   "inputs": [
+    "permute_1"
+   ],
+   "output": "getitem_7",
+   "attrs": {
+    "index": [
+     0
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_8",
+   "op": "getitem",
+   "inputs": [
+    "permute_1"
+   ],
+   "output": "getitem_8",
+   "attrs": {
+    "index": [
+     1
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_9",
+   "op": "getitem",
+   "inputs": [
+    "permute_1"
+   ],
+   "output": "getitem_9",
+   "attrs": {
+    "index": [
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose",
+   "op": "permute",
+   "inputs": [
+    "getitem_8"
+   ],
+   "output": "transpose",
+   "attrs": {
+    "perm": [
+     0,
+     1,
+     3,
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "matmul",
+   "op": "matmul",
+   "inputs": [
+    "getitem_7",
+    "transpose"
+   ],
+   "output": "truediv",
+   "attrs": {
+    "m0": 1405895691,
+    "shift": -8,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "softmax",
+   "op": "softmax",
+   "inputs": [
+    "truediv"
+   ],
+   "output": "softmax",
+   "attrs": {
+    "axis": -1,
+    "out_mult": 582
+   },
+   "params": {
+    "lut": {
+     "key": "softmax/lut",
+     "dtype": "int32",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "matmul_1",
+   "op": "matmul",
+   "inputs": [
+    "softmax",
+    "getitem_9"
+   ],
+   "output": "matmul_1",
+   "attrs": {
+    "m0": 1215299499,
+    "shift": -8,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_1",
+   "op": "permute",
+   "inputs": [
+    "matmul_1"
+   ],
+   "output": "transpose_1",
+   "attrs": {
+    "perm": [
+     0,
+     2,
+     1,
+     3
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "reshape_1",
+   "op": "reshape",
+   "inputs": [
+    "transpose_1"
+   ],
+   "output": "reshape_1",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     128
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_0_proj",
+   "op": "linear",
+   "inputs": [
+    "reshape_1"
+   ],
+   "output": "blocks_0_proj",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 8,
+    "weight_scheme": "channel"
+   },
+   "params": {
+    "w": {
+     "key": "blocks_0_proj/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_0_proj/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_0_proj/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_0_proj/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_0_proj/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_1",
+   "op": "add",
+   "inputs": [
+    "add",
+    "blocks_0_proj"
+   ],
+   "output": "add_1",
+   "attrs": {
+    "ma": 71729,
+    "mb": 13790,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_0_ln2_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_1"
+   ],
+   "output": "blocks_0_ln2_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_0_fc1",
+   "op": "linear",
+   "inputs": [
+    "blocks_0_ln2_norm"
+   ],
+   "output": "blocks_0_fc1",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_0_fc1/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "bias": {
+     "key": "blocks_0_fc1/bias",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "m0": {
+     "key": "blocks_0_fc1/m0",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "shift": {
+     "key": "blocks_0_fc1/shift",
+     "dtype": "int8",
+     "shape": [
+      512
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_0_fc1/w_scale",
+     "dtype": "float32",
+     "shape": [
+      512
+     ]
+    },
+    "w4": {
+     "key": "blocks_0_fc1/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "gmul": {
+     "key": "blocks_0_fc1/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      512
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_0_fc1/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      256
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_0_fc1/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "gelu",
+   "op": "lut",
+   "inputs": [
+    "blocks_0_fc1"
+   ],
+   "output": "gelu",
+   "attrs": {
+    "fn": "gelu"
+   },
+   "params": {
+    "lut": {
+     "key": "gelu/lut",
+     "dtype": "int8",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "blocks_0_fc2",
+   "op": "linear",
+   "inputs": [
+    "gelu"
+   ],
+   "output": "blocks_0_fc2",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_0_fc2/w",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_0_fc2/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_0_fc2/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_0_fc2/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_0_fc2/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_0_fc2/w4",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_0_fc2/gmul",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_0_fc2/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      512,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_0_fc2/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_2",
+   "op": "add",
+   "inputs": [
+    "add_1",
+    "blocks_0_fc2"
+   ],
+   "output": "add_2",
+   "attrs": {
+    "ma": 69727,
+    "mb": 17383,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_1_ln1_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_2"
+   ],
+   "output": "blocks_1_ln1_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_1_qkv",
+   "op": "linear",
+   "inputs": [
+    "blocks_1_ln1_norm"
+   ],
+   "output": "blocks_1_qkv",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_1_qkv/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "bias": {
+     "key": "blocks_1_qkv/bias",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "m0": {
+     "key": "blocks_1_qkv/m0",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "shift": {
+     "key": "blocks_1_qkv/shift",
+     "dtype": "int8",
+     "shape": [
+      384
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_1_qkv/w_scale",
+     "dtype": "float32",
+     "shape": [
+      384
+     ]
+    },
+    "w4": {
+     "key": "blocks_1_qkv/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "gmul": {
+     "key": "blocks_1_qkv/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      384
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_1_qkv/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      192
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_1_qkv/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      192
+     ]
+    }
+   }
+  },
+  {
+   "name": "view_2",
+   "op": "reshape",
+   "inputs": [
+    "blocks_1_qkv"
+   ],
+   "output": "view_2",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     3,
+     4,
+     32
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "permute_2",
+   "op": "permute",
+   "inputs": [
+    "view_2"
+   ],
+   "output": "permute_2",
+   "attrs": {
+    "perm": [
+     2,
+     0,
+     3,
+     1,
+     4
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_13",
+   "op": "getitem",
+   "inputs": [
+    "permute_2"
+   ],
+   "output": "getitem_13",
+   "attrs": {
+    "index": [
+     0
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_14",
+   "op": "getitem",
+   "inputs": [
+    "permute_2"
+   ],
+   "output": "getitem_14",
+   "attrs": {
+    "index": [
+     1
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_15",
+   "op": "getitem",
+   "inputs": [
+    "permute_2"
+   ],
+   "output": "getitem_15",
+   "attrs": {
+    "index": [
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_2",
+   "op": "permute",
+   "inputs": [
+    "getitem_14"
+   ],
+   "output": "transpose_2",
+   "attrs": {
+    "perm": [
+     0,
+     1,
+     3,
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "matmul_2",
+   "op": "matmul",
+   "inputs": [
+    "getitem_13",
+    "transpose_2"
+   ],
+   "output": "truediv_1",
+   "attrs": {
+    "m0": 1254460889,
+    "shift": -8,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "softmax_1",
+   "op": "softmax",
+   "inputs": [
+    "truediv_1"
+   ],
+   "output": "softmax_1",
+   "attrs": {
+    "axis": -1,
+    "out_mult": 261
+   },
+   "params": {
+    "lut": {
+     "key": "softmax_1/lut",
+     "dtype": "int32",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "matmul_3",
+   "op": "matmul",
+   "inputs": [
+    "softmax_1",
+    "getitem_15"
+   ],
+   "output": "matmul_3",
+   "attrs": {
+    "m0": 1449464208,
+    "shift": -7,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_3",
+   "op": "permute",
+   "inputs": [
+    "matmul_3"
+   ],
+   "output": "transpose_3",
+   "attrs": {
+    "perm": [
+     0,
+     2,
+     1,
+     3
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "reshape_2",
+   "op": "reshape",
+   "inputs": [
+    "transpose_3"
+   ],
+   "output": "reshape_2",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     128
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_1_proj",
+   "op": "linear",
+   "inputs": [
+    "reshape_2"
+   ],
+   "output": "blocks_1_proj",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 8,
+    "weight_scheme": "channel"
+   },
+   "params": {
+    "w": {
+     "key": "blocks_1_proj/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_1_proj/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_1_proj/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_1_proj/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_1_proj/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_3",
+   "op": "add",
+   "inputs": [
+    "add_2",
+    "blocks_1_proj"
+   ],
+   "output": "add_3",
+   "attrs": {
+    "ma": 65837,
+    "mb": 15427,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_1_ln2_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_3"
+   ],
+   "output": "blocks_1_ln2_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_1_fc1",
+   "op": "linear",
+   "inputs": [
+    "blocks_1_ln2_norm"
+   ],
+   "output": "blocks_1_fc1",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_1_fc1/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "bias": {
+     "key": "blocks_1_fc1/bias",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "m0": {
+     "key": "blocks_1_fc1/m0",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "shift": {
+     "key": "blocks_1_fc1/shift",
+     "dtype": "int8",
+     "shape": [
+      512
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_1_fc1/w_scale",
+     "dtype": "float32",
+     "shape": [
+      512
+     ]
+    },
+    "w4": {
+     "key": "blocks_1_fc1/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "gmul": {
+     "key": "blocks_1_fc1/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      512
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_1_fc1/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      256
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_1_fc1/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "gelu_1",
+   "op": "lut",
+   "inputs": [
+    "blocks_1_fc1"
+   ],
+   "output": "gelu_1",
+   "attrs": {
+    "fn": "gelu"
+   },
+   "params": {
+    "lut": {
+     "key": "gelu_1/lut",
+     "dtype": "int8",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "blocks_1_fc2",
+   "op": "linear",
+   "inputs": [
+    "gelu_1"
+   ],
+   "output": "blocks_1_fc2",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_1_fc2/w",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_1_fc2/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_1_fc2/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_1_fc2/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_1_fc2/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_1_fc2/w4",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_1_fc2/gmul",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_1_fc2/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      512,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_1_fc2/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_4",
+   "op": "add",
+   "inputs": [
+    "add_3",
+    "blocks_1_fc2"
+   ],
+   "output": "add_4",
+   "attrs": {
+    "ma": 60829,
+    "mb": 15122,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_2_ln1_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_4"
+   ],
+   "output": "blocks_2_ln1_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_2_qkv",
+   "op": "linear",
+   "inputs": [
+    "blocks_2_ln1_norm"
+   ],
+   "output": "blocks_2_qkv",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_2_qkv/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "bias": {
+     "key": "blocks_2_qkv/bias",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "m0": {
+     "key": "blocks_2_qkv/m0",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "shift": {
+     "key": "blocks_2_qkv/shift",
+     "dtype": "int8",
+     "shape": [
+      384
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_2_qkv/w_scale",
+     "dtype": "float32",
+     "shape": [
+      384
+     ]
+    },
+    "w4": {
+     "key": "blocks_2_qkv/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "gmul": {
+     "key": "blocks_2_qkv/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      384
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_2_qkv/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      192
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_2_qkv/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      192
+     ]
+    }
+   }
+  },
+  {
+   "name": "view_3",
+   "op": "reshape",
+   "inputs": [
+    "blocks_2_qkv"
+   ],
+   "output": "view_3",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     3,
+     4,
+     32
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "permute_3",
+   "op": "permute",
+   "inputs": [
+    "view_3"
+   ],
+   "output": "permute_3",
+   "attrs": {
+    "perm": [
+     2,
+     0,
+     3,
+     1,
+     4
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_19",
+   "op": "getitem",
+   "inputs": [
+    "permute_3"
+   ],
+   "output": "getitem_19",
+   "attrs": {
+    "index": [
+     0
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_20",
+   "op": "getitem",
+   "inputs": [
+    "permute_3"
+   ],
+   "output": "getitem_20",
+   "attrs": {
+    "index": [
+     1
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_21",
+   "op": "getitem",
+   "inputs": [
+    "permute_3"
+   ],
+   "output": "getitem_21",
+   "attrs": {
+    "index": [
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_4",
+   "op": "permute",
+   "inputs": [
+    "getitem_20"
+   ],
+   "output": "transpose_4",
+   "attrs": {
+    "perm": [
+     0,
+     1,
+     3,
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "matmul_4",
+   "op": "matmul",
+   "inputs": [
+    "getitem_19",
+    "transpose_4"
+   ],
+   "output": "truediv_2",
+   "attrs": {
+    "m0": 2064692294,
+    "shift": -9,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "softmax_2",
+   "op": "softmax",
+   "inputs": [
+    "truediv_2"
+   ],
+   "output": "softmax_2",
+   "attrs": {
+    "axis": -1,
+    "out_mult": 264
+   },
+   "params": {
+    "lut": {
+     "key": "softmax_2/lut",
+     "dtype": "int32",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "matmul_5",
+   "op": "matmul",
+   "inputs": [
+    "softmax_2",
+    "getitem_21"
+   ],
+   "output": "matmul_5",
+   "attrs": {
+    "m0": 1519314812,
+    "shift": -7,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_5",
+   "op": "permute",
+   "inputs": [
+    "matmul_5"
+   ],
+   "output": "transpose_5",
+   "attrs": {
+    "perm": [
+     0,
+     2,
+     1,
+     3
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "reshape_3",
+   "op": "reshape",
+   "inputs": [
+    "transpose_5"
+   ],
+   "output": "reshape_3",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     128
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_2_proj",
+   "op": "linear",
+   "inputs": [
+    "reshape_3"
+   ],
+   "output": "blocks_2_proj",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_2_proj/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_2_proj/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_2_proj/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_2_proj/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_2_proj/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_2_proj/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_2_proj/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_2_proj/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_2_proj/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_5",
+   "op": "add",
+   "inputs": [
+    "add_4",
+    "blocks_2_proj"
+   ],
+   "output": "add_5",
+   "attrs": {
+    "ma": 64754,
+    "mb": 16939,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_2_ln2_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_5"
+   ],
+   "output": "blocks_2_ln2_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_2_fc1",
+   "op": "linear",
+   "inputs": [
+    "blocks_2_ln2_norm"
+   ],
+   "output": "blocks_2_fc1",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_2_fc1/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "bias": {
+     "key": "blocks_2_fc1/bias",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "m0": {
+     "key": "blocks_2_fc1/m0",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "shift": {
+     "key": "blocks_2_fc1/shift",
+     "dtype": "int8",
+     "shape": [
+      512
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_2_fc1/w_scale",
+     "dtype": "float32",
+     "shape": [
+      512
+     ]
+    },
+    "w4": {
+     "key": "blocks_2_fc1/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "gmul": {
+     "key": "blocks_2_fc1/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      512
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_2_fc1/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      256
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_2_fc1/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "gelu_2",
+   "op": "lut",
+   "inputs": [
+    "blocks_2_fc1"
+   ],
+   "output": "gelu_2",
+   "attrs": {
+    "fn": "gelu"
+   },
+   "params": {
+    "lut": {
+     "key": "gelu_2/lut",
+     "dtype": "int8",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "blocks_2_fc2",
+   "op": "linear",
+   "inputs": [
+    "gelu_2"
+   ],
+   "output": "blocks_2_fc2",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_2_fc2/w",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_2_fc2/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_2_fc2/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_2_fc2/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_2_fc2/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_2_fc2/w4",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_2_fc2/gmul",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_2_fc2/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      512,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_2_fc2/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_6",
+   "op": "add",
+   "inputs": [
+    "add_5",
+    "blocks_2_fc2"
+   ],
+   "output": "add_6",
+   "attrs": {
+    "ma": 61240,
+    "mb": 14126,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_3_ln1_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_6"
+   ],
+   "output": "blocks_3_ln1_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_3_qkv",
+   "op": "linear",
+   "inputs": [
+    "blocks_3_ln1_norm"
+   ],
+   "output": "blocks_3_qkv",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_3_qkv/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "bias": {
+     "key": "blocks_3_qkv/bias",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "m0": {
+     "key": "blocks_3_qkv/m0",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "shift": {
+     "key": "blocks_3_qkv/shift",
+     "dtype": "int8",
+     "shape": [
+      384
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_3_qkv/w_scale",
+     "dtype": "float32",
+     "shape": [
+      384
+     ]
+    },
+    "w4": {
+     "key": "blocks_3_qkv/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "gmul": {
+     "key": "blocks_3_qkv/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      384
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_3_qkv/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      192
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_3_qkv/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      192
+     ]
+    }
+   }
+  },
+  {
+   "name": "view_4",
+   "op": "reshape",
+   "inputs": [
+    "blocks_3_qkv"
+   ],
+   "output": "view_4",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     3,
+     4,
+     32
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "permute_4",
+   "op": "permute",
+   "inputs": [
+    "view_4"
+   ],
+   "output": "permute_4",
+   "attrs": {
+    "perm": [
+     2,
+     0,
+     3,
+     1,
+     4
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_25",
+   "op": "getitem",
+   "inputs": [
+    "permute_4"
+   ],
+   "output": "getitem_25",
+   "attrs": {
+    "index": [
+     0
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_26",
+   "op": "getitem",
+   "inputs": [
+    "permute_4"
+   ],
+   "output": "getitem_26",
+   "attrs": {
+    "index": [
+     1
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_27",
+   "op": "getitem",
+   "inputs": [
+    "permute_4"
+   ],
+   "output": "getitem_27",
+   "attrs": {
+    "index": [
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_6",
+   "op": "permute",
+   "inputs": [
+    "getitem_26"
+   ],
+   "output": "transpose_6",
+   "attrs": {
+    "perm": [
+     0,
+     1,
+     3,
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "matmul_6",
+   "op": "matmul",
+   "inputs": [
+    "getitem_25",
+    "transpose_6"
+   ],
+   "output": "truediv_3",
+   "attrs": {
+    "m0": 1696811594,
+    "shift": -9,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "softmax_3",
+   "op": "softmax",
+   "inputs": [
+    "truediv_3"
+   ],
+   "output": "softmax_3",
+   "attrs": {
+    "axis": -1,
+    "out_mult": 230
+   },
+   "params": {
+    "lut": {
+     "key": "softmax_3/lut",
+     "dtype": "int32",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "matmul_7",
+   "op": "matmul",
+   "inputs": [
+    "softmax_3",
+    "getitem_27"
+   ],
+   "output": "matmul_7",
+   "attrs": {
+    "m0": 1461378462,
+    "shift": -7,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_7",
+   "op": "permute",
+   "inputs": [
+    "matmul_7"
+   ],
+   "output": "transpose_7",
+   "attrs": {
+    "perm": [
+     0,
+     2,
+     1,
+     3
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "reshape_4",
+   "op": "reshape",
+   "inputs": [
+    "transpose_7"
+   ],
+   "output": "reshape_4",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     128
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_3_proj",
+   "op": "linear",
+   "inputs": [
+    "reshape_4"
+   ],
+   "output": "blocks_3_proj",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_3_proj/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_3_proj/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_3_proj/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_3_proj/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_3_proj/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_3_proj/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_3_proj/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_3_proj/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_3_proj/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_7",
+   "op": "add",
+   "inputs": [
+    "add_6",
+    "blocks_3_proj"
+   ],
+   "output": "add_7",
+   "attrs": {
+    "ma": 60195,
+    "mb": 15532,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_3_ln2_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_7"
+   ],
+   "output": "blocks_3_ln2_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_3_fc1",
+   "op": "linear",
+   "inputs": [
+    "blocks_3_ln2_norm"
+   ],
+   "output": "blocks_3_fc1",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_3_fc1/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "bias": {
+     "key": "blocks_3_fc1/bias",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "m0": {
+     "key": "blocks_3_fc1/m0",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "shift": {
+     "key": "blocks_3_fc1/shift",
+     "dtype": "int8",
+     "shape": [
+      512
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_3_fc1/w_scale",
+     "dtype": "float32",
+     "shape": [
+      512
+     ]
+    },
+    "w4": {
+     "key": "blocks_3_fc1/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "gmul": {
+     "key": "blocks_3_fc1/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      512
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_3_fc1/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      256
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_3_fc1/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "gelu_3",
+   "op": "lut",
+   "inputs": [
+    "blocks_3_fc1"
+   ],
+   "output": "gelu_3",
+   "attrs": {
+    "fn": "gelu"
+   },
+   "params": {
+    "lut": {
+     "key": "gelu_3/lut",
+     "dtype": "int8",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "blocks_3_fc2",
+   "op": "linear",
+   "inputs": [
+    "gelu_3"
+   ],
+   "output": "blocks_3_fc2",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_3_fc2/w",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_3_fc2/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_3_fc2/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_3_fc2/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_3_fc2/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_3_fc2/w4",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_3_fc2/gmul",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_3_fc2/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      512,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_3_fc2/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_8",
+   "op": "add",
+   "inputs": [
+    "add_7",
+    "blocks_3_fc2"
+   ],
+   "output": "add_8",
+   "attrs": {
+    "ma": 58130,
+    "mb": 10505,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_4_ln1_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_8"
+   ],
+   "output": "blocks_4_ln1_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_4_qkv",
+   "op": "linear",
+   "inputs": [
+    "blocks_4_ln1_norm"
+   ],
+   "output": "blocks_4_qkv",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_4_qkv/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "bias": {
+     "key": "blocks_4_qkv/bias",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "m0": {
+     "key": "blocks_4_qkv/m0",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "shift": {
+     "key": "blocks_4_qkv/shift",
+     "dtype": "int8",
+     "shape": [
+      384
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_4_qkv/w_scale",
+     "dtype": "float32",
+     "shape": [
+      384
+     ]
+    },
+    "w4": {
+     "key": "blocks_4_qkv/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "gmul": {
+     "key": "blocks_4_qkv/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      384
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_4_qkv/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      192
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_4_qkv/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      192
+     ]
+    }
+   }
+  },
+  {
+   "name": "view_5",
+   "op": "reshape",
+   "inputs": [
+    "blocks_4_qkv"
+   ],
+   "output": "view_5",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     3,
+     4,
+     32
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "permute_5",
+   "op": "permute",
+   "inputs": [
+    "view_5"
+   ],
+   "output": "permute_5",
+   "attrs": {
+    "perm": [
+     2,
+     0,
+     3,
+     1,
+     4
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_31",
+   "op": "getitem",
+   "inputs": [
+    "permute_5"
+   ],
+   "output": "getitem_31",
+   "attrs": {
+    "index": [
+     0
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_32",
+   "op": "getitem",
+   "inputs": [
+    "permute_5"
+   ],
+   "output": "getitem_32",
+   "attrs": {
+    "index": [
+     1
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_33",
+   "op": "getitem",
+   "inputs": [
+    "permute_5"
+   ],
+   "output": "getitem_33",
+   "attrs": {
+    "index": [
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_8",
+   "op": "permute",
+   "inputs": [
+    "getitem_32"
+   ],
+   "output": "transpose_8",
+   "attrs": {
+    "perm": [
+     0,
+     1,
+     3,
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "matmul_8",
+   "op": "matmul",
+   "inputs": [
+    "getitem_31",
+    "transpose_8"
+   ],
+   "output": "truediv_4",
+   "attrs": {
+    "m0": 2127613432,
+    "shift": -9,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "softmax_4",
+   "op": "softmax",
+   "inputs": [
+    "truediv_4"
+   ],
+   "output": "softmax_4",
+   "attrs": {
+    "axis": -1,
+    "out_mult": 287
+   },
+   "params": {
+    "lut": {
+     "key": "softmax_4/lut",
+     "dtype": "int32",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "matmul_9",
+   "op": "matmul",
+   "inputs": [
+    "softmax_4",
+    "getitem_33"
+   ],
+   "output": "matmul_9",
+   "attrs": {
+    "m0": 1241730625,
+    "shift": -7,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_9",
+   "op": "permute",
+   "inputs": [
+    "matmul_9"
+   ],
+   "output": "transpose_9",
+   "attrs": {
+    "perm": [
+     0,
+     2,
+     1,
+     3
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "reshape_5",
+   "op": "reshape",
+   "inputs": [
+    "transpose_9"
+   ],
+   "output": "reshape_5",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     128
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_4_proj",
+   "op": "linear",
+   "inputs": [
+    "reshape_5"
+   ],
+   "output": "blocks_4_proj",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_4_proj/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_4_proj/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_4_proj/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_4_proj/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_4_proj/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_4_proj/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_4_proj/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_4_proj/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_4_proj/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_9",
+   "op": "add",
+   "inputs": [
+    "add_8",
+    "blocks_4_proj"
+   ],
+   "output": "add_9",
+   "attrs": {
+    "ma": 56871,
+    "mb": 11134,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_4_ln2_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_9"
+   ],
+   "output": "blocks_4_ln2_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_4_fc1",
+   "op": "linear",
+   "inputs": [
+    "blocks_4_ln2_norm"
+   ],
+   "output": "blocks_4_fc1",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_4_fc1/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "bias": {
+     "key": "blocks_4_fc1/bias",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "m0": {
+     "key": "blocks_4_fc1/m0",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "shift": {
+     "key": "blocks_4_fc1/shift",
+     "dtype": "int8",
+     "shape": [
+      512
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_4_fc1/w_scale",
+     "dtype": "float32",
+     "shape": [
+      512
+     ]
+    },
+    "w4": {
+     "key": "blocks_4_fc1/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "gmul": {
+     "key": "blocks_4_fc1/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      512
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_4_fc1/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      256
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_4_fc1/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "gelu_4",
+   "op": "lut",
+   "inputs": [
+    "blocks_4_fc1"
+   ],
+   "output": "gelu_4",
+   "attrs": {
+    "fn": "gelu"
+   },
+   "params": {
+    "lut": {
+     "key": "gelu_4/lut",
+     "dtype": "int8",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "blocks_4_fc2",
+   "op": "linear",
+   "inputs": [
+    "gelu_4"
+   ],
+   "output": "blocks_4_fc2",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_4_fc2/w",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_4_fc2/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_4_fc2/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_4_fc2/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_4_fc2/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_4_fc2/w4",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_4_fc2/gmul",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_4_fc2/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      512,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_4_fc2/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_10",
+   "op": "add",
+   "inputs": [
+    "add_9",
+    "blocks_4_fc2"
+   ],
+   "output": "add_10",
+   "attrs": {
+    "ma": 61124,
+    "mb": 8786,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_5_ln1_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_10"
+   ],
+   "output": "blocks_5_ln1_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_5_qkv",
+   "op": "linear",
+   "inputs": [
+    "blocks_5_ln1_norm"
+   ],
+   "output": "blocks_5_qkv",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_5_qkv/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "bias": {
+     "key": "blocks_5_qkv/bias",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "m0": {
+     "key": "blocks_5_qkv/m0",
+     "dtype": "int32",
+     "shape": [
+      384
+     ]
+    },
+    "shift": {
+     "key": "blocks_5_qkv/shift",
+     "dtype": "int8",
+     "shape": [
+      384
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_5_qkv/w_scale",
+     "dtype": "float32",
+     "shape": [
+      384
+     ]
+    },
+    "w4": {
+     "key": "blocks_5_qkv/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      384
+     ]
+    },
+    "gmul": {
+     "key": "blocks_5_qkv/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      384
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_5_qkv/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      192
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_5_qkv/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      192
+     ]
+    }
+   }
+  },
+  {
+   "name": "view_6",
+   "op": "reshape",
+   "inputs": [
+    "blocks_5_qkv"
+   ],
+   "output": "view_6",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     3,
+     4,
+     32
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "permute_6",
+   "op": "permute",
+   "inputs": [
+    "view_6"
+   ],
+   "output": "permute_6",
+   "attrs": {
+    "perm": [
+     2,
+     0,
+     3,
+     1,
+     4
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_37",
+   "op": "getitem",
+   "inputs": [
+    "permute_6"
+   ],
+   "output": "getitem_37",
+   "attrs": {
+    "index": [
+     0
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_38",
+   "op": "getitem",
+   "inputs": [
+    "permute_6"
+   ],
+   "output": "getitem_38",
+   "attrs": {
+    "index": [
+     1
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "getitem_39",
+   "op": "getitem",
+   "inputs": [
+    "permute_6"
+   ],
+   "output": "getitem_39",
+   "attrs": {
+    "index": [
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_10",
+   "op": "permute",
+   "inputs": [
+    "getitem_38"
+   ],
+   "output": "transpose_10",
+   "attrs": {
+    "perm": [
+     0,
+     1,
+     3,
+     2
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "matmul_10",
+   "op": "matmul",
+   "inputs": [
+    "getitem_37",
+    "transpose_10"
+   ],
+   "output": "truediv_5",
+   "attrs": {
+    "m0": 1966675451,
+    "shift": -9,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "softmax_5",
+   "op": "softmax",
+   "inputs": [
+    "truediv_5"
+   ],
+   "output": "softmax_5",
+   "attrs": {
+    "axis": -1,
+    "out_mult": 181
+   },
+   "params": {
+    "lut": {
+     "key": "softmax_5/lut",
+     "dtype": "int32",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "matmul_11",
+   "op": "matmul",
+   "inputs": [
+    "softmax_5",
+    "getitem_39"
+   ],
+   "output": "matmul_11",
+   "attrs": {
+    "m0": 1767755094,
+    "shift": -7,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127
+   },
+   "params": {}
+  },
+  {
+   "name": "transpose_11",
+   "op": "permute",
+   "inputs": [
+    "matmul_11"
+   ],
+   "output": "transpose_11",
+   "attrs": {
+    "perm": [
+     0,
+     2,
+     1,
+     3
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "reshape_6",
+   "op": "reshape",
+   "inputs": [
+    "transpose_11"
+   ],
+   "output": "reshape_6",
+   "attrs": {
+    "shape": [
+     "N",
+     64,
+     128
+    ]
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_5_proj",
+   "op": "linear",
+   "inputs": [
+    "reshape_6"
+   ],
+   "output": "blocks_5_proj",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_5_proj/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_5_proj/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_5_proj/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_5_proj/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_5_proj/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_5_proj/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_5_proj/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_5_proj/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_5_proj/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_11",
+   "op": "add",
+   "inputs": [
+    "add_10",
+    "blocks_5_proj"
+   ],
+   "output": "add_11",
+   "attrs": {
+    "ma": 69164,
+    "mb": 10114,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "blocks_5_ln2_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_11"
+   ],
+   "output": "blocks_5_ln2_norm",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "blocks_5_fc1",
+   "op": "linear",
+   "inputs": [
+    "blocks_5_ln2_norm"
+   ],
+   "output": "blocks_5_fc1",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_5_fc1/w",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "bias": {
+     "key": "blocks_5_fc1/bias",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "m0": {
+     "key": "blocks_5_fc1/m0",
+     "dtype": "int32",
+     "shape": [
+      512
+     ]
+    },
+    "shift": {
+     "key": "blocks_5_fc1/shift",
+     "dtype": "int8",
+     "shape": [
+      512
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_5_fc1/w_scale",
+     "dtype": "float32",
+     "shape": [
+      512
+     ]
+    },
+    "w4": {
+     "key": "blocks_5_fc1/w4",
+     "dtype": "int8",
+     "shape": [
+      128,
+      512
+     ]
+    },
+    "gmul": {
+     "key": "blocks_5_fc1/gmul",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      512
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_5_fc1/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      128,
+      256
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_5_fc1/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      4,
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "gelu_5",
+   "op": "lut",
+   "inputs": [
+    "blocks_5_fc1"
+   ],
+   "output": "gelu_5",
+   "attrs": {
+    "fn": "gelu"
+   },
+   "params": {
+    "lut": {
+     "key": "gelu_5/lut",
+     "dtype": "int8",
+     "shape": [
+      256
+     ]
+    }
+   }
+  },
+  {
+   "name": "blocks_5_fc2",
+   "op": "linear",
+   "inputs": [
+    "gelu_5"
+   ],
+   "output": "blocks_5_fc2",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 4,
+    "weight_scheme": "group_int",
+    "group_size": 32
+   },
+   "params": {
+    "w": {
+     "key": "blocks_5_fc2/w",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "bias": {
+     "key": "blocks_5_fc2/bias",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "m0": {
+     "key": "blocks_5_fc2/m0",
+     "dtype": "int32",
+     "shape": [
+      128
+     ]
+    },
+    "shift": {
+     "key": "blocks_5_fc2/shift",
+     "dtype": "int8",
+     "shape": [
+      128
+     ]
+    },
+    "w_scale": {
+     "key": "blocks_5_fc2/w_scale",
+     "dtype": "float32",
+     "shape": [
+      128
+     ]
+    },
+    "w4": {
+     "key": "blocks_5_fc2/w4",
+     "dtype": "int8",
+     "shape": [
+      512,
+      128
+     ]
+    },
+    "gmul": {
+     "key": "blocks_5_fc2/gmul",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      128
+     ]
+    },
+    "w4_packed": {
+     "key": "blocks_5_fc2/w4_packed",
+     "dtype": "uint8",
+     "shape": [
+      512,
+      64
+     ]
+    },
+    "gmul_packed": {
+     "key": "blocks_5_fc2/gmul_packed",
+     "dtype": "uint8",
+     "shape": [
+      16,
+      64
+     ]
+    }
+   }
+  },
+  {
+   "name": "add_12",
+   "op": "add",
+   "inputs": [
+    "add_11",
+    "blocks_5_fc2"
+   ],
+   "output": "add_12",
+   "attrs": {
+    "ma": 62953,
+    "mb": 8599,
+    "za": 0,
+    "zb": 0,
+    "zo": 0
+   },
+   "params": {}
+  },
+  {
+   "name": "ln_norm",
+   "op": "layernorm",
+   "inputs": [
+    "add_12"
+   ],
+   "output": "ln_norm",
+   "attrs": {},
+   "params": {}
+  }
+ ],
+ "stats": {
+  "weight_bytes": 626176,
+  "n_nodes": 128
+ },
+ "meta": {
+  "qconfig": {
+   "act_method": "mse",
+   "act_symmetric": true,
+   "weight_bits": 4,
+   "layer_bits": {
+    "embed": 8,
+    "blocks_0_proj": 8,
+    "blocks_1_proj": 8
+   },
+   "int4_scheme": "group_int",
+   "group_size": 32,
+   "weight_method": "mse",
+   "split_scales": true,
+   "fold_ln": true,
+   "output_affine": "host",
+   "method_overrides": {},
+   "softmax_mult": "mse",
+   "fixed_qparams": {}
+  },
+  "int_exact": true
+ },
+ "extra": {
+  "metrics": {
+   "cos_mean": 0.9981255608408168,
+   "cos_min": 0.9974218012765089,
+   "sqnr_db": 24.261009855150867
+  }
+ }
+}

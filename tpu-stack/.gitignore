@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+*.so
+*.o
+quant/data/
+quant/results/**/weights.npz
+perfmodel/out/dse.csv

@@ -1,0 +1,19 @@
+workload,batch,config,total_us,ms_per_image,images_per_s,util,weight_mb_moved
+jepa_tiny,1,tpuv1 (baseline),6286.4,6.286,159.1,0.6883,1.28
+jepa_tiny,1,proposed_32x32@200,583.63,0.584,1713.4,0.8609,1.184
+jepa_tiny,4,tpuv1 (baseline),22911.2,5.728,174.6,0.7817,1.575
+jepa_tiny,4,proposed_32x32@200,2309.81,0.577,1731.7,0.8869,1.184
+jepa_tiny,16,tpuv1 (baseline),89410.4,5.588,179.0,0.8091,2.755
+jepa_tiny,16,proposed_32x32@200,9214.51,0.576,1736.4,0.8937,1.184
+vit_tiny,1,tpuv1 (baseline),69948.75,69.949,14.3,0.8578,6.608
+vit_tiny,1,proposed_32x32@200,7041.05,7.041,142.0,0.964,5.652
+vit_tiny,4,tpuv1 (baseline),271846.66,67.962,14.7,0.8884,9.483
+vit_tiny,4,proposed_32x32@200,27905.06,6.976,143.3,0.9733,5.652
+vit_tiny,16,tpuv1 (baseline),1245280.99,77.83,12.8,0.7544,37.352
+vit_tiny,16,proposed_32x32@200,110720.24,6.92,144.5,0.9817,22.02
+deit_small,1,tpuv1 (baseline),218712.99,218.713,4.6,0.9172,23.833
+deit_small,1,proposed_32x32@200,23915.87,23.916,41.8,0.9834,21.922
+deit_small,4,tpuv1 (baseline),886637.68,221.659,4.5,0.9037,29.583
+deit_small,4,proposed_32x32@200,95264.66,23.816,42.0,0.9876,21.922
+deit_small,16,tpuv1 (baseline),3868629.55,241.789,4.1,0.8209,117.172
+deit_small,16,proposed_32x32@200,381301.94,23.831,42.0,0.9869,86.508

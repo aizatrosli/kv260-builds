@@ -1,0 +1,11 @@
+benchmark,source,unit,measured,model,error_pct
+mlp_wide,board,us,354.0,357.245,0.9
+mlp_wide util,board,%,72.0,71.66,-0.5
+mlp3,board,us,67.0,71.593,6.9
+digits_b128,board,us,153.0,146.002,-4.6
+jepa matmul (ROM weights),verilator,us,4100.0,4283.32,4.5
+jepa util (ROM weights),verilator,%,78.0,74.708,-4.2
+jepa matmul (AXI weights),verilator,us,5500.0,5657.766,2.9
+jepa weight stalls (AXI),verilator,cycles,142000.0,137444.617,-3.2
+jepa util (AXI weights),verilator,%,58.0,56.559,-2.5
+jepa VPU serial,verilator,us,1800.0,1837.227,2.1
