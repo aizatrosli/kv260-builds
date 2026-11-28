@@ -41,6 +41,7 @@ done
 echo "== sigrok decoders on the simulated bus capture"
 if command -v "${SIGROK_CLI:-sigrok-cli}" >/dev/null; then
   python3 sigrok/test_decoders.py build
+  python3 sigrok/test_apml.py build
 else
   echo "skipped: sigrok-cli not found (set SIGROK_CLI=/path/to/sigrok-cli)"
 fi
