@@ -144,16 +144,17 @@ class JepaExecutor(GraphExecutor):
                     steps.append(Gemm(f"qk{l}.{b}.{hh}", qkv, 2 * hh * M + b * TOK, M, KTd, TOK, s, g * 4 * TOK, TOK, 4,
                                       kT, g * 4 * KTd * 256, np.full(64, m0), np.full(64, sh), np.zeros(64, int),
                                       x_load=(0, T * M), op="qk"))
+            sq = int(P.get(f"smq{l}", vpu.SQ_DEFAULT))     # per-layer softmax numerator (1/q scale)
             if vp:
                 lut_e = vpu.lut_idx(vpu.LUT_EXP, l, L)
                 for g in range(B * H):
                     steps.append(Vec(f"sm{l}.{g}", vpu.V_SM, s, g * 4 * TOK, p, g * 4 * TOK, TOK, 4, TOK,
-                                     lut_idx=lut_e, op="softmax"))
+                                     lut_idx=lut_e, sq=sq, op="softmax"))
             else:
-                def smx(ctx, s=s, p=p, lut=P[f"exp{l}"]):
+                def smx(ctx, s=s, p=p, lut=P[f"exp{l}"], sq=sq):
                     sv = ctx.read(s)
                     with ctx.ex.prof.span("softmax"):
-                        ops.softmax(sv, lut, out=ctx.out(p))
+                        ops.softmax(sv, lut, out=ctx.out(p), q=sq)
                     ctx.done(p)
                 steps.append(Host(f"softmax{l}", smx, [s], [p], op="softmax"))
             o = act(f"o{l}", T)

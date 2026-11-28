@@ -109,3 +109,19 @@ def jepa_fixed_qparams(cal, P):
         fq[fc2.name] = (S[f"f{l}"], 0)
         fq[one(fc2, "add").name] = (S[f"rb{l}"], 0)
     return fq
+
+
+def jepa_softmax_mults(cal, P):
+    """{fx softmax node: jepa's per-layer numerator P['smq<l>']} for QConfig(softmax_mult=...).
+    Empty for a qmodel without per-layer numerators (all layers then use 127)."""
+    c = P["cfg"]
+    nodes = {n.name: n for n in cal.nodes}
+    one = lambda n, kind: [u for u in cal.real_users(n) if cal.kind(u) == kind][0]
+    out = {}
+    for l in range(c["depth"]):
+        if f"smq{l}" not in P:
+            continue
+        perm = cal.real_users(cal.real_users(nodes[f"blocks_{l}_qkv"])[0])[0]
+        q = {u.args[1]: u for u in cal.real_users(perm)}[0]
+        out[one(one(one(q, "matmul"), "div"), "softmax").name] = int(P[f"smq{l}"])
+    return out

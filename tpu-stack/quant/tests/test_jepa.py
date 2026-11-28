@@ -31,7 +31,7 @@ def test_bit_exact_vs_jepa_reference(setup):
     enc, cal, x, ref = setup
     P = J.load_jepa_qmodel()
     jq = J.jepa_quantize_module()
-    g = cal.build(QConfig(fixed_qparams=J.jepa_fixed_qparams(cal, P)))
+    g = cal.build(QConfig(fixed_qparams=J.jepa_fixed_qparams(cal, P), softmax_mult=J.jepa_softmax_mults(cal, P)))
     for n in g.weight_nodes():
         key = "embed" if n.name == "embed" else n.name.split("_")[2] + n.name.split("_")[1]
         for a in ("w", "bias", "m0", "shift"):

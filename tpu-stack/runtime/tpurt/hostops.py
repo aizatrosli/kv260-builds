@@ -66,17 +66,17 @@ class NumpyOps:
         o[...] = y
         return o
 
-    def softmax(self, s, lut, out=None):
-        """s [G, T, M, 16]: softmax over the T*16 keys of each (g, m) row."""
+    def softmax(self, s, lut, out=None, q=127):
+        """s [G, T, M, 16]: softmax over the T*16 keys of each (g, m) row; probs at scale 1/q (sat 127)."""
         lut = np.asarray(lut, I64)
         s32 = s.astype(I32)
         m = s32.max(axis=(1, 3), keepdims=True)
         idx = m - s32
-        small = int(lut.max()) * ((127 << SM_K) // max(int(lut[0]), 1)) + (1 << SM_K) < (1 << 31)
+        small = int(lut.max()) * ((int(q) << SM_K) // max(int(lut[0]), 1)) + (1 << SM_K) < (1 << 31)
         e = lut.astype(I32 if small else I64)[idx]
         Z = e.sum(axis=(1, 3), keepdims=True, dtype=I64)
-        inv = ((I64(127) << SM_K) // Z).astype(e.dtype)
-        p = (e * inv + (1 << (SM_K - 1))) >> SM_K
+        inv = ((I64(q) << SM_K) // Z).astype(e.dtype)
+        p = np.minimum((e * inv + (1 << (SM_K - 1))) >> SM_K, 127)
         o = _out(out, s.shape)
         o[...] = p
         return o
@@ -121,7 +121,7 @@ class COps(NumpyOps):
     def __init__(self, path=LIB):
         self.lib = ctypes.CDLL(str(path))
         P, I, Z, L = ctypes.c_void_p, ctypes.c_int, ctypes.c_size_t, ctypes.c_int64
-        sig = dict(tpurt_layernorm=[P, P, I, I], tpurt_softmax=[P, P, I, I, I, P], tpurt_lut8=[P, P, Z, P],
+        sig = dict(tpurt_layernorm=[P, P, I, I], tpurt_softmax=[P, P, I, I, I, P, I], tpurt_lut8=[P, P, Z, P],
                    tpurt_ew_add=[P, P, P, Z, L, L], tpurt_ew_add_bcast=[P, P, P, Z, Z, L, L],
                    tpurt_pack_kv=[P, P, P, I, I, I, I])
         for fn, args in sig.items():
@@ -149,11 +149,11 @@ class COps(NumpyOps):
         self.lib.tpurt_layernorm(x.ctypes.data, o.ctypes.data, x.shape[0], x.shape[1])
         return o
 
-    def softmax(self, s, lut, out=None):
+    def softmax(self, s, lut, out=None, q=127):
         s = self._c(s)
         o = _out(out, s.shape)
         G, T, M, _ = s.shape
-        self.lib.tpurt_softmax(s.ctypes.data, o.ctypes.data, G, T, M, self._lut(lut, I32).ctypes.data)
+        self.lib.tpurt_softmax(s.ctypes.data, o.ctypes.data, G, T, M, self._lut(lut, I32).ctypes.data, int(q))
         return o
 
     def lut8(self, x, lut, out=None):

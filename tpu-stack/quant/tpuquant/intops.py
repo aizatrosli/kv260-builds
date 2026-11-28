@@ -15,11 +15,12 @@ LN_Q = 32          # LayerNorm output scale 1/LN_Q
 LN_K = 24          # LayerNorm reciprocal precision (bits)
 SM_K = 22          # softmax reciprocal precision (bits)
 SM_OUT = 127       # softmax output: probs in 0..127 at scale 1/127
+SM_QMAX = 8191     # largest per-layer softmax numerator: X_VCFG.sq is 14 bits, quotient stays < 2^20
 EXP_ONE = 1 << 15  # exp LUT value for logit difference 0
 EW_SH = 16         # element-wise multiplier precision (Q16)
 INT32_MIN, INT32_MAX = -(1 << 31), (1 << 31) - 1
 
-CONSTANTS = dict(LN_Q=LN_Q, LN_K=LN_K, SM_K=SM_K, SM_OUT=SM_OUT, EXP_ONE=EXP_ONE, EW_SH=EW_SH)
+CONSTANTS = dict(LN_Q=LN_Q, LN_K=LN_K, SM_K=SM_K, SM_OUT=SM_OUT, SM_QMAX=SM_QMAX, EXP_ONE=EXP_ONE, EW_SH=EW_SH)
 
 
 # --------------------------------------------------------------------------------- requant ---
@@ -146,6 +147,22 @@ def softmax(s, lut, out_mult=SM_OUT):
     Z = e.sum(-1, keepdims=True)
     inv = (I64(out_mult) << SM_K) // Z
     return np.minimum((e * inv + (1 << (SM_K - 1))) >> SM_K, 127)
+
+
+def sm_numerator(p, step=8, max_samples=400000, seed=0):
+    """Per-layer softmax numerator q (output scale 1/q) minimising the MSE of
+    round-and-saturate(p * q) / q against float probabilities p; searches 127..SM_QMAX in `step`s.
+    Identical to jepa-tpu quantize.sm_numerator (branch jepa-e2e-optimize), which the RTL's
+    X_VCFG.sq field consumes."""
+    p = np.asarray(p, np.float64).ravel()
+    if p.size > max_samples:
+        p = p[np.random.default_rng(seed).choice(p.size, max_samples, replace=False)]
+    best = None
+    for q in range(SM_OUT, SM_QMAX + 1, step):
+        err = ((np.minimum(np.round(p * q), 127) / q - p) ** 2).mean()
+        if best is None or err < best[0]:
+            best = (err, q)
+    return best[1]
 
 
 def _gelu(x):

@@ -85,6 +85,7 @@ class Vec:
     b: Optional[Tensor] = None
     b_off: int = 0
     mult: tuple = (0, 0)
+    sq: int = 127                    # softmax numerator (X_VCFG.sq) for V_SM
     lut_idx: Optional[int] = None    # LUT-ROM table for V_SM / V_LUT
     op: str = ""
 
@@ -317,9 +318,12 @@ class ProgramBuilder:
             if self.lut_loaded.get(sel) != v.lut_idx:
                 self._emit(vpu.lut(sel, v.lut_idx))
                 self.lut_loaded[sel] = v.lut_idx
-        if v.func == vpu.V_ADD and self.vpu_mult != tuple(v.mult):
-            self._emit(vpu.vcfg(*v.mult))
-            self.vpu_mult = tuple(v.mult)
+        if v.func in (vpu.V_ADD, vpu.V_SM):          # X_VCFG holds (ma, mb, sq) together
+            cur = self.vpu_mult or (0, 0, vpu.SQ_DEFAULT)
+            want = (*v.mult, cur[2]) if v.func == vpu.V_ADD else (cur[0], cur[1], int(v.sq))
+            if self.vpu_mult != want:
+                self._emit(vpu.vcfg(*want))
+                self.vpu_mult = want
         ob = self._alloc(v.out)
         self._emit(vpu.vec(v.func, v.chunks, self.ub_base[v.a] + v.a_off, ob + v.o_off, v.count, v.stride, 1,
                            self.ub_base[v.b] + v.b_off if v.b is not None else 0))

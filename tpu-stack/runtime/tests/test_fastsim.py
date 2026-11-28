@@ -111,7 +111,11 @@ def test_vpu_encoding_roundtrip():
     assert w & 0xFF == 0x43
     op, f = vpu.xdec(w)
     assert (op, f) == (vpu.X_VEC, dict(op=vpu.V_SM, rows=4, a=123, b=789, o=456, count=64, rstride=1024, vstride=3))
-    assert vpu.xdec(vpu.vcfg(-5, 131071)) == (vpu.X_VCFG, dict(ma=-5, mb=131071))
+    assert vpu.xdec(vpu.vcfg(-5, 131071)) == (vpu.X_VCFG, dict(ma=-5, mb=131071, sq=127))
+    assert vpu.xdec(vpu.vcfg(3, -4, 8191)) == (vpu.X_VCFG, dict(ma=3, mb=-4, sq=8191))
+    for bad in (126, 8192):
+        with pytest.raises(ValueError):
+            vpu.vcfg(0, 0, bad)
     assert vpu.xdec(vpu.lut(1, 200)) == (vpu.X_LUT, dict(sel=1, idx=200))
     with pytest.raises(ValueError):
         vpu.vcfg(1 << 17, 0)
@@ -119,3 +123,25 @@ def test_vpu_encoding_roundtrip():
         vpu.vec(vpu.V_LN, 64, 0, 0, 1, 1)                 # rows is 6 bits
     t = np.arange(-128, 128)
     assert (vpu.rom_table(vpu.LUT_GELU, vpu.rom_entry(vpu.LUT_GELU, t)) == t).all()
+
+
+def test_softmax_numerator_sq(P):
+    """X_VCFG.sq = per-layer numerator: inv = (q << 22) // Z, p = min(rnd(e * inv >> 22), 127)."""
+    rng = np.random.default_rng(5)
+    M = 64
+    S = rng.integers(-128, 128, (M, 64))
+    ub = [list(r) for r in tile(S).reshape(-1, 16)]
+    rom = {0: vpu.rom_entry(vpu.LUT_EXP, P["exp0"])}
+    for q in (127, 263, 599, 8191):
+        prog = [vpu.vcfg(0, 0, q), vpu.lut(vpu.LUT_EXP, 0), vpu.vec(vpu.V_SM, 4, 0, 1000, M, M),
+                asm.interrupt_host(1), asm.halt()]
+        m = fastsim.FastCoreSim(ub, vpu_enabled=True, lut_rom=rom).run(prog)
+        lut = np.asarray(P["exp0"], np.int64)
+        e = lut[S.max(-1, keepdims=True) - S]
+        inv = (np.int64(q) << 22) // e.sum(-1, keepdims=True)
+        ref = np.minimum((e * inv + (1 << 21)) >> 22, 127)
+        assert (untile(m.ubA[1000:1000 + 4 * M].reshape(4, M, 16)) == ref).all()
+        from tpurt.hostops import get_ops
+        for ops in {type(o): o for o in (get_ops("c"), get_ops("numpy"))}.values():
+            got = ops.softmax(tile(S)[None].astype(np.int8), P["exp0"], q=q)[0]
+            assert (untile(got) == ref).all(), type(ops).__name__

@@ -63,7 +63,7 @@ def test_machine_vs_fastsim(cj):
             vpu.lut(vpu.LUT_GELU, vpu.lut_idx(vpu.LUT_GELU, 4, depth)),
             vpu.vec(vpu.V_ADD, 8, 0, 2000, 64, 64, b=512),
             vpu.vec(vpu.V_LN, 8, 64, 2600, 32, 128, 2),
-            vpu.vec(vpu.V_SM, 4, 1024, 3200, 64, 64),
+            vpu.vcfg(int(ma), int(mb), 263), vpu.vec(vpu.V_SM, 4, 1024, 3200, 64, 64),
             vpu.vec(vpu.V_LUT, 5, 1300, 3500, 40, 80),
             asm.interrupt_host(1), asm.halt()]
     cp = types.SimpleNamespace(prog=prog, wrom=[], prom=[], lrom=lrom)

@@ -77,7 +77,9 @@ MNIST is downloaded with torchvision into `data/` the first time.
 - `weight_bits` and `layer_bits={name: bits}`.
 - `int4_scheme`, `group_size`.
 - `weight_method`: `minmax` or `mse`.
-- `softmax_mult`: None means 1/127, the jepa spec. An int or an observer name calibrates it.
+- `softmax_mult`: None means 1/127, the jepa spec. An int or an observer name calibrates it (127..8191).
+  On the TPU the exported softmax node's `attrs.out_mult` is the X_VCFG `sq` field (bits [63:50]);
+  `intops.sm_numerator(p)` reproduces the RTL thread's exact per-layer search on float probabilities.
 - `split_scales`, `fold_ln`, `output_affine`, `method_overrides`.
 - `fixed_qparams`: import scales from elsewhere.
 

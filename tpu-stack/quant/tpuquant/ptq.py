@@ -43,7 +43,7 @@ class QConfig:
     fold_ln: bool = True                 # fold LayerNorm gamma/beta into consuming linears
     output_affine: str = "host"          # final-LN affine: 'host' (after dequant) | 'int'
     method_overrides: dict = field(default_factory=dict)   # fx node name -> observer method
-    softmax_mult: object = None          # None: probs at 1/127 (jepa spec); int: 1/int;
+    softmax_mult: object = None          # None: probs at 1/127 (jepa spec); int: 1/int; dict: per node;
                                          # observer name (e.g. 'percentile:99.99'): calibrated
     fixed_qparams: dict = field(default_factory=dict)      # fx node name -> (scale, zp) (imports)
 
@@ -539,6 +539,8 @@ class _Lowering:
             raise NotImplementedError(f"{n.name}: softmax over the last dim only")
         x = self.T(n.args[0]) if self.T(n.args[0]).uniform else self.g.tensors[self.uniform(n.args[0])]
         sm = self.cfg.softmax_mult
+        if isinstance(sm, dict):                     # per-node: {fx softmax node name: int | observer}
+            sm = sm.get(n.name)
         if sm is None:
             mult = I.SM_OUT
         elif isinstance(sm, (int, np.integer)):
@@ -547,7 +549,7 @@ class _Lowering:
             st = self.c.stats[n.name]
             o = make_observer(sm)
             o.__dict__.update({k: getattr(st, k) for k in ("min", "max", "hist", "count", "nbins")})
-            mult = int(np.clip(np.floor(127 / max(o.range(True)[1], 1e-6)), I.SM_OUT, 4095))
+            mult = int(np.clip(np.floor(127 / max(o.range(True)[1], 1e-6)), I.SM_OUT, I.SM_QMAX))
         self.new_tensor(n.name, self.c.shape[n.name], 1.0 / mult, 0, 0, 127)
         self.g.add_node(Node(n.name, "softmax", [x.name], n.name, dict(axis=-1, out_mult=mult),
                              dict(lut=I.exp_lut(x.scale).astype(np.int32)), dict(fx=n.name)))

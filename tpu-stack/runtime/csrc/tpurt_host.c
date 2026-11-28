@@ -94,8 +94,11 @@ void tpurt_layernorm(const int8_t *x, int8_t *y, int T, int M)
 		}
 }
 
-/* Row softmax (intops.softmax) for G groups, each T tiles x M rows: s[g][t][m][l]. lut[256] int32. */
-void tpurt_softmax(const int8_t *s, int8_t *p, int G, int T, int M, const int32_t *lut)
+/* Row softmax (intops.softmax) for G groups, each T tiles x M rows: s[g][t][m][l]. lut[256] int32.
+   q: per-layer numerator (output scale 1/q, 127..8191), probabilities saturate at 127. */
+static inline int8_t sat127(int64_t v) { return (int8_t)(v > 127 ? 127 : v); }
+
+void tpurt_softmax(const int8_t *s, int8_t *p, int G, int T, int M, const int32_t *lut, int q)
 {
 	int32_t lmax = 0;
 	for (int i = 0; i < 256; i++) if (lut[i] > lmax) lmax = lut[i];
@@ -113,14 +116,14 @@ void tpurt_softmax(const int8_t *s, int8_t *p, int G, int T, int M, const int32_
 				const int8_t *r = sg + ((size_t)t * M + m) * 16;
 				for (int l = 0; l < 16; l++) Z += lut[mx - r[l]];
 			}
-			int64_t inv = ((int64_t)127 << SM_K) / Z;
+			int64_t inv = ((int64_t)q << SM_K) / Z;
 			if ((int64_t)lmax * inv + (1 << (SM_K - 1)) < ((int64_t)1 << 31)) {   /* int32 is exact */
 				const int32_t iv = (int32_t)inv;
 				for (int t = 0; t < T; t++) {
 					const int8_t *r = sg + ((size_t)t * M + m) * 16;
 					int8_t *o = pg + ((size_t)t * M + m) * 16;
 					for (int l = 0; l < 16; l++)
-						o[l] = (int8_t)((lut[mx - r[l]] * iv + (1 << (SM_K - 1))) >> SM_K);
+						o[l] = sat127((lut[mx - r[l]] * iv + (1 << (SM_K - 1))) >> SM_K);
 				}
 				continue;
 			}
@@ -128,7 +131,7 @@ void tpurt_softmax(const int8_t *s, int8_t *p, int G, int T, int M, const int32_
 				const int8_t *r = sg + ((size_t)t * M + m) * 16;
 				int8_t *o = pg + ((size_t)t * M + m) * 16;
 				for (int l = 0; l < 16; l++)
-					o[l] = (int8_t)(((int64_t)lut[mx - r[l]] * inv + ((int64_t)1 << (SM_K - 1))) >> SM_K);
+					o[l] = sat127(((int64_t)lut[mx - r[l]] * inv + ((int64_t)1 << (SM_K - 1))) >> SM_K);
 			}
 		}
 	}

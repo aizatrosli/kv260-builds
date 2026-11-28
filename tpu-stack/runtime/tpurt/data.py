@@ -63,7 +63,9 @@ def reference_forward(P, img_q):
         for h in range(H):
             sl = slice(h * dh, (h + 1) * dh)
             s = I.requant(I.matmul(q[:, sl], k[:, sl].T), 0, *P[f"qk{l}"])
-            heads.append(I.requant(I.matmul(I.softmax(s, P[f"exp{l}"]), v[:, sl]), 0, *P[f"pv{l}"]))
+            smq = P.get(f"smq{l}")       # per-layer numerator (jepa-e2e-optimize); absent = 127
+            p = I.softmax(s, P[f"exp{l}"]) if smq is None else I.softmax(s, P[f"exp{l}"], smq)
+            heads.append(I.requant(I.matmul(p, v[:, sl]), 0, *P[f"pv{l}"]))
         x = I.ew_add(x, lin(np.concatenate(heads, -1), P[f"proj{l}"]), *P[f"adda{l}"])
         g = I.lut8(lin(I.layernorm(x), P[f"fc1{l}"]), P[f"gelu{l}"])
         x = I.ew_add(x, lin(g, P[f"fc2{l}"]), *P[f"addb{l}"])

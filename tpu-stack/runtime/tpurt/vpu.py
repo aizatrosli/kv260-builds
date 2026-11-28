@@ -12,7 +12,9 @@ three vector ops below; the field table XF mirrors all eight so programs can be 
                                         2 LN   integer LayerNorm (intops.layernorm)
                                         3 SM   softmax via LUT_EXP (0..127)
   X_LUT   0x44  sel[8] idx[23:16]   load VPU LUT `sel` (0 exp, 1 gelu) from LUT-ROM table `idx`
-  X_VCFG  0x45  ma[25:8] mb[49:32]  residual multipliers (signed 18 bit) for later ADD jobs
+  X_VCFG  0x45  ma[25:8] mb[49:32] sq[63:50]   residual multipliers (signed 18 bit) for later ADD
+                jobs, and the softmax numerator q (127..8191): SM jobs compute
+                inv = (q << 22) // Z, p = min((e*inv + 2^21) >> 22, 127), i.e. probs at scale 1/q
 
 The LUT ROM is part of the bitstream (lrom.hex, 256 x 16-bit entries per table). compile_jepa's
 layout is exp table of layer l at idx l and GELU table of layer l at idx depth + l; GELU entries are
@@ -32,7 +34,7 @@ XF = {
     X_VEC:   {"op": (8, 2), "rows": (10, 6), "a": (16, 16), "b": (32, 16), "o": (48, 16),
               "count": (64, 16), "rstride": (80, 16), "vstride": (96, 8)},
     X_LUT:   {"sel": (8, 1), "idx": (16, 8)},
-    X_VCFG:  {"ma": (8, 18), "mb": (32, 18)},
+    X_VCFG:  {"ma": (8, 18), "mb": (32, 18), "sq": (50, 14)},
     X_UBROM: {"base": (16, 16), "count": (32, 16)},
     X_MM:    {"q": (8, 2), "sync": (10, 1), "kt": (11, 6), "in_base": (17, 16), "acc_row": (33, 11),
               "out_row": (44, 16), "entry": (60, 16), "B": (76, 16)},
@@ -96,8 +98,13 @@ def lut(sel, idx):
     return xenc(X_LUT, sel=sel, idx=idx)
 
 
-def vcfg(ma, mb):
-    return xenc(X_VCFG, ma=ma, mb=mb)
+SQ_DEFAULT, SQ_MAX = 127, 8191
+
+
+def vcfg(ma, mb, sq=SQ_DEFAULT):
+    if not SQ_DEFAULT <= int(sq) <= SQ_MAX:
+        raise ValueError(f"X_VCFG.sq={sq} outside {SQ_DEFAULT}..{SQ_MAX}")
+    return xenc(X_VCFG, ma=ma, mb=mb, sq=sq)
 
 
 # ---- LUT ROM -------------------------------------------------------------------------------------

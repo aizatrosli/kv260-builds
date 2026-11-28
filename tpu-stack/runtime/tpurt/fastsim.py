@@ -65,6 +65,7 @@ class FastCoreSim(isasim.CoreSim):
         self.mem = mem if mem is not None else DictMem(self.ddr)
         self.vpu = vpu_enabled
         self.vpu_mult = (0, 0)
+        self.vpu_sq = vpu.SQ_DEFAULT
         self.lut_exp = np.zeros(256, np.int64)
         self.lut_gelu = np.zeros(256, np.int64)
         self.lut_rom = lut_rom or {}
@@ -102,7 +103,7 @@ class FastCoreSim(isasim.CoreSim):
                 return False
             self.instr_count += 1
             if op == vpu.X_VCFG:
-                self.vpu_mult = (f["ma"], f["mb"])
+                self.vpu_mult, self.vpu_sq = (f["ma"], f["mb"]), f["sq"]
                 return True
             self._sync(asm.U_ALL)                         # sequencer waits for the core to go idle
             if op == vpu.X_LUT:
@@ -225,7 +226,7 @@ class FastCoreSim(isasim.CoreSim):
         elif fn == vpu.V_LN:
             y = _ops.layernorm(np.ascontiguousarray(a))
         else:
-            y = _ops.softmax(np.ascontiguousarray(a)[None], self.lut_exp)[0]
+            y = _ops.softmax(np.ascontiguousarray(a)[None], self.lut_exp, q=self.vpu_sq)[0]
         oidx = self._rows(f["o"], f)
         self.ubA[oidx] = y
         self.ubV[oidx] = True
