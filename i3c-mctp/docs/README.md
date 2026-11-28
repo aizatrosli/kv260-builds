@@ -150,6 +150,10 @@ The FPGA's internal PULLUP (DS925 IRPU 75–190 µA, about 17–44 kΩ) is far t
 - **Register map and command format:** header comments of `rtl/i3c_mctp_axil.sv` and `rtl/i3c_sdr_engine.sv`.
 - **Vivado (not done here):** add `rtl/*.sv` and the XDC to a project, then build a block design with the Zynq UltraScale+ PS, `kv260_i3c_top` as a module reference on M_AXI_HPM0_FPD through an AXI SmartConnect, `pl_clk0` = 100 MHz, and `proc_sys_reset`.
 
+## 6. Decoding with sigrok / PulseView (SLogic32U3)
+
+`sigrok/decoders/` holds three stacked decoders, `i3c_sdr` -> `mctp_i3c` -> `mctp`, that show I3C SDR frames, CCCs, ENTDAA, MCTP packets with PEC check, Pending Read IBIs and reassembled MCTP (control) messages. Install steps, SLogic32U3 settings, probe points and a demo capture from the simulation are in [sigrok/README.md](../sigrok/README.md). `run_sim.sh` writes the bus capture (`build/i3c_bus.vcd`) and runs `sigrok/test_decoders.py` when sigrok-cli is installed.
+
 ## What is not verified
 
 **Not done yet:**

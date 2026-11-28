@@ -70,6 +70,25 @@ module tb_i3c_mctp;
 
   i3c_timing_mon mon (.scl, .sda, .od_i(sda_pu), .ctrl_drv_i(sda_oe));
 
+  // +BUSVCD: dump only the two bus wires (as a logic analyzer would see them) for sigrok decoding.
+  // Timescale 1 ns; sigrok-cli -I vcd:downsample=N gives a (1000/N) MS/s capture.
+  int  bfd = 0;
+  initial begin
+    string bdir;
+    if ($test$plusargs("BUSVCD")) begin
+      if (!$value$plusargs("OUT=%s", bdir)) bdir = "build";
+      bfd = $fopen({bdir, "/i3c_bus.vcd"}, "w");
+      $fdisplay(bfd, "$timescale 1 ns $end\n$scope module i3c $end");
+      $fdisplay(bfd, "$var wire 1 ! SCL $end\n$var wire 1 \" SDA $end\n$upscope $end\n$enddefinitions $end");
+      $fdisplay(bfd, "#0\n1!\n1\"");
+    end
+  end
+  always @(scl or sda) if (bfd != 0) begin
+    $fdisplay(bfd, "#%0d", longint'($realtime));
+    $fdisplay(bfd, "%b!", scl);
+    $fdisplay(bfd, "%b\"", sda);
+  end
+
   // ---------------- response capture ----------------
   logic [31:0] rq[$];
   always @(posedge clk) if (rv) rq.push_back(rsp);
@@ -340,6 +359,7 @@ module tb_i3c_mctp;
     check(contention == 0, "no bus contention");
     check(tA.parity_errors == 1 && tB.parity_errors == 0, "only the injected parity error was seen");
     $fclose(fd);
+    if (bfd != 0) begin $fdisplay(bfd, "#%0d", longint'($realtime) + 1000); $fclose(bfd); end  // idle tail so the last STOP is decoded
     if (errors == 0) $display("tb_i3c_mctp: ALL PASS");
     else $display("tb_i3c_mctp: %0d FAILURES", errors);
     $finish;
