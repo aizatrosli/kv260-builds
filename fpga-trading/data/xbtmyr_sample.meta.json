@@ -1,0 +1,4255 @@
+{
+ "pair": "XBTMYR",
+ "mode": "rest",
+ "out": "data/xbtmyr_sample.jsonl.gz",
+ "events": 1005,
+ "counts": {
+  "clear": 3,
+  "level": 1000,
+  "trade": 2
+ },
+ "wall_start": "2026-11-28T06:33:43.668720+00:00",
+ "wall_seconds": 300.0,
+ "first_ts": 1795847624076,
+ "last_ts": 1795847921750,
+ "units": {
+  "price": "MYR (int)",
+  "volume": "1e-6 BTC (int)",
+  "ts": "ms epoch"
+ },
+ "interval_s": 1.0,
+ "trades_every": 1,
+ "resync_every": 120,
+ "depth": 0,
+ "book": "top",
+ "http": "keepalive",
+ "polls": 300,
+ "request_errors": 0,
+ "trade_duplicates_dropped": 71,
+ "rtt_summary": {
+  "/api/1/orderbook_top": {
+   "requests": 300,
+   "errors": 0,
+   "n": 300,
+   "min_ms": 132.54,
+   "median_ms": 142.15,
+   "p90_ms": 151.27,
+   "p99_ms": 193.36,
+   "max_ms": 461.37,
+   "mean_ms": 145.13
+  },
+  "/api/1/trades": {
+   "requests": 300,
+   "errors": 0,
+   "n": 300,
+   "min_ms": 121.37,
+   "median_ms": 132.04,
+   "p90_ms": 140.62,
+   "p99_ms": 233.34,
+   "max_ms": 472.27,
+   "mean_ms": 137.78
+  }
+ },
+ "requests": [
+  {
+   "t": 1795847624137,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 461.37,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847624322,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 184.3,
+   "bytes": 16
+  },
+  {
+   "t": 1795847624815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.27,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847624964,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 148.56,
+   "bytes": 16
+  },
+  {
+   "t": 1795847625809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 134.39,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847625944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.21,
+   "bytes": 16
+  },
+  {
+   "t": 1795847626816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.16,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847626944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.61,
+   "bytes": 16
+  },
+  {
+   "t": 1795847627818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.2,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847627956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.65,
+   "bytes": 16
+  },
+  {
+   "t": 1795847628819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.62,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847629058,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 238.89,
+   "bytes": 16
+  },
+  {
+   "t": 1795847629811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.08,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847629946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.54,
+   "bytes": 16
+  },
+  {
+   "t": 1795847630821,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.39,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847630960,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 139.15,
+   "bytes": 16
+  },
+  {
+   "t": 1795847631823,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 148.88,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847631957,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.97,
+   "bytes": 16
+  },
+  {
+   "t": 1795847632815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.24,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847632946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.25,
+   "bytes": 16
+  },
+  {
+   "t": 1795847633816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.5,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847633953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.24,
+   "bytes": 16
+  },
+  {
+   "t": 1795847634814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.28,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847634949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.72,
+   "bytes": 16
+  },
+  {
+   "t": 1795847635826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.43,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847635956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.48,
+   "bytes": 16
+  },
+  {
+   "t": 1795847636816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.19,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847636944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.24,
+   "bytes": 16
+  },
+  {
+   "t": 1795847637818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.69,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847637955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.71,
+   "bytes": 16
+  },
+  {
+   "t": 1795847638826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.11,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847638957,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.49,
+   "bytes": 16
+  },
+  {
+   "t": 1795847639842,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 167.37,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847639969,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.56,
+   "bytes": 16
+  },
+  {
+   "t": 1795847640818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.71,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847640943,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 124.91,
+   "bytes": 16
+  },
+  {
+   "t": 1795847641818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.28,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847641956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 137.32,
+   "bytes": 16
+  },
+  {
+   "t": 1795847642819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.9,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847642956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.71,
+   "bytes": 16
+  },
+  {
+   "t": 1795847643810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 135.67,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847643941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.67,
+   "bytes": 16
+  },
+  {
+   "t": 1795847644820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.48,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847644956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.66,
+   "bytes": 16
+  },
+  {
+   "t": 1795847645816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.91,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847645951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.26,
+   "bytes": 16
+  },
+  {
+   "t": 1795847646811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.17,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847646945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.91,
+   "bytes": 16
+  },
+  {
+   "t": 1795847647820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.29,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847647955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.51,
+   "bytes": 16
+  },
+  {
+   "t": 1795847648812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.85,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847648944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.9,
+   "bytes": 16
+  },
+  {
+   "t": 1795847649815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.79,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847649951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.82,
+   "bytes": 16
+  },
+  {
+   "t": 1795847650813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.77,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847650946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.14,
+   "bytes": 16
+  },
+  {
+   "t": 1795847651817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.38,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847651949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.71,
+   "bytes": 16
+  },
+  {
+   "t": 1795847652812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.25,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847652945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.26,
+   "bytes": 16
+  },
+  {
+   "t": 1795847653820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.14,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847653960,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 139.23,
+   "bytes": 16
+  },
+  {
+   "t": 1795847654817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.73,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847654949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.14,
+   "bytes": 16
+  },
+  {
+   "t": 1795847655827,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 152.46,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847655967,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 139.11,
+   "bytes": 16
+  },
+  {
+   "t": 1795847656816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.65,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847656946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.22,
+   "bytes": 16
+  },
+  {
+   "t": 1795847657809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 134.96,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847657946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.06,
+   "bytes": 16
+  },
+  {
+   "t": 1795847658826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.82,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847658987,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 159.59,
+   "bytes": 16
+  },
+  {
+   "t": 1795847659816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.79,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847659951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.64,
+   "bytes": 16
+  },
+  {
+   "t": 1795847660817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.52,
+   "bytes": 7761
+  },
+  {
+   "t": 1795847660953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.22,
+   "bytes": 16
+  },
+  {
+   "t": 1795847661812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.36,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847661949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.65,
+   "bytes": 16
+  },
+  {
+   "t": 1795847662854,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 179.95,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847662993,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.0,
+   "bytes": 16
+  },
+  {
+   "t": 1795847663820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.46,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847663951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.4,
+   "bytes": 16
+  },
+  {
+   "t": 1795847664811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.62,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847664941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.31,
+   "bytes": 16
+  },
+  {
+   "t": 1795847665815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.39,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847665940,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 124.82,
+   "bytes": 16
+  },
+  {
+   "t": 1795847666818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.56,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847666953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.18,
+   "bytes": 16
+  },
+  {
+   "t": 1795847667821,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.38,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847667950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.11,
+   "bytes": 16
+  },
+  {
+   "t": 1795847668813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.99,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847668946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.38,
+   "bytes": 16
+  },
+  {
+   "t": 1795847669819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.56,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847669951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.94,
+   "bytes": 16
+  },
+  {
+   "t": 1795847670816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.36,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847670946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.85,
+   "bytes": 16
+  },
+  {
+   "t": 1795847671816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.27,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847671949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.5,
+   "bytes": 16
+  },
+  {
+   "t": 1795847672818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.25,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847672956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.93,
+   "bytes": 16
+  },
+  {
+   "t": 1795847673820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.85,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847673951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.39,
+   "bytes": 16
+  },
+  {
+   "t": 1795847674819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.43,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847674950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.28,
+   "bytes": 16
+  },
+  {
+   "t": 1795847675826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 149.06,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847675965,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 137.82,
+   "bytes": 16
+  },
+  {
+   "t": 1795847676814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.86,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847676948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.13,
+   "bytes": 16
+  },
+  {
+   "t": 1795847677811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.12,
+   "bytes": 7758
+  },
+  {
+   "t": 1795847678284,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 472.27,
+   "bytes": 16
+  },
+  {
+   "t": 1795847678818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.98,
+   "bytes": 7758
+  },
+  {
+   "t": 1795847678944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.13,
+   "bytes": 16
+  },
+  {
+   "t": 1795847679823,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 149.06,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847679960,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.1,
+   "bytes": 16
+  },
+  {
+   "t": 1795847680809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 134.74,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847680951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 141.69,
+   "bytes": 16
+  },
+  {
+   "t": 1795847681818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.57,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847681946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.8,
+   "bytes": 16
+  },
+  {
+   "t": 1795847682809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 134.71,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847682946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.22,
+   "bytes": 16
+  },
+  {
+   "t": 1795847683815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.8,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847683958,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 142.55,
+   "bytes": 16
+  },
+  {
+   "t": 1795847684820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.19,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847684956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.84,
+   "bytes": 16
+  },
+  {
+   "t": 1795847685826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.53,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847685959,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.23,
+   "bytes": 16
+  },
+  {
+   "t": 1795847686818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.19,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847686957,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.32,
+   "bytes": 16
+  },
+  {
+   "t": 1795847687907,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 232.65,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847688040,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.08,
+   "bytes": 16
+  },
+  {
+   "t": 1795847688823,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 148.6,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847688956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.81,
+   "bytes": 16
+  },
+  {
+   "t": 1795847689815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.58,
+   "bytes": 7759
+  },
+  {
+   "t": 1795847689946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.76,
+   "bytes": 16
+  },
+  {
+   "t": 1795847690821,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.32,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847690954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.99,
+   "bytes": 16
+  },
+  {
+   "t": 1795847691820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.21,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847691954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.27,
+   "bytes": 16
+  },
+  {
+   "t": 1795847692820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.59,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847692963,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 141.26,
+   "bytes": 16
+  },
+  {
+   "t": 1795847693815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.23,
+   "bytes": 7757
+  },
+  {
+   "t": 1795847693946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.24,
+   "bytes": 16
+  },
+  {
+   "t": 1795847694826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.82,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847695060,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 233.34,
+   "bytes": 16
+  },
+  {
+   "t": 1795847695815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.08,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847695946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.49,
+   "bytes": 16
+  },
+  {
+   "t": 1795847696812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.06,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847696955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 141.79,
+   "bytes": 16
+  },
+  {
+   "t": 1795847697813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.04,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847697944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.08,
+   "bytes": 16
+  },
+  {
+   "t": 1795847698814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.93,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847698947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.19,
+   "bytes": 16
+  },
+  {
+   "t": 1795847699810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 135.83,
+   "bytes": 7757
+  },
+  {
+   "t": 1795847700026,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 215.33,
+   "bytes": 16
+  },
+  {
+   "t": 1795847700824,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 150.03,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847700953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.05,
+   "bytes": 16
+  },
+  {
+   "t": 1795847701814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.55,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847701952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 137.15,
+   "bytes": 16
+  },
+  {
+   "t": 1795847702814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.59,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847702955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 139.95,
+   "bytes": 16
+  },
+  {
+   "t": 1795847703820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.42,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847703957,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.76,
+   "bytes": 16
+  },
+  {
+   "t": 1795847704820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.22,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847704952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.7,
+   "bytes": 16
+  },
+  {
+   "t": 1795847705820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.51,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847705956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.75,
+   "bytes": 16
+  },
+  {
+   "t": 1795847706811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.58,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847706940,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.97,
+   "bytes": 16
+  },
+  {
+   "t": 1795847707815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.04,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847707946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.47,
+   "bytes": 16
+  },
+  {
+   "t": 1795847708814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.02,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847708941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.84,
+   "bytes": 16
+  },
+  {
+   "t": 1795847709813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.54,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847709939,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.41,
+   "bytes": 16
+  },
+  {
+   "t": 1795847710817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.88,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847710954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.03,
+   "bytes": 16
+  },
+  {
+   "t": 1795847711815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.22,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847711947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.19,
+   "bytes": 16
+  },
+  {
+   "t": 1795847712811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.6,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847712948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.51,
+   "bytes": 16
+  },
+  {
+   "t": 1795847713816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.88,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847713947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.14,
+   "bytes": 16
+  },
+  {
+   "t": 1795847714821,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.89,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847714949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.47,
+   "bytes": 16
+  },
+  {
+   "t": 1795847715811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.67,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847715936,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 124.83,
+   "bytes": 16
+  },
+  {
+   "t": 1795847716830,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 155.62,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847716965,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.11,
+   "bytes": 16
+  },
+  {
+   "t": 1795847717809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 135.23,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847717940,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.6,
+   "bytes": 16
+  },
+  {
+   "t": 1795847718823,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 148.43,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847718952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.01,
+   "bytes": 16
+  },
+  {
+   "t": 1795847719826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 152.16,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847719954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.73,
+   "bytes": 16
+  },
+  {
+   "t": 1795847720811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.69,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847720937,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.47,
+   "bytes": 16
+  },
+  {
+   "t": 1795847721814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.19,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847721953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 137.9,
+   "bytes": 16
+  },
+  {
+   "t": 1795847722812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.46,
+   "bytes": 7757
+  },
+  {
+   "t": 1795847722947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.73,
+   "bytes": 16
+  },
+  {
+   "t": 1795847723817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.34,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847723945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.0,
+   "bytes": 16
+  },
+  {
+   "t": 1795847724816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.36,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847724951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.67,
+   "bytes": 16
+  },
+  {
+   "t": 1795847725818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.05,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847725954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.02,
+   "bytes": 16
+  },
+  {
+   "t": 1795847726815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.12,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847726954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.41,
+   "bytes": 16
+  },
+  {
+   "t": 1795847727808,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 133.48,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847727940,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.03,
+   "bytes": 16
+  },
+  {
+   "t": 1795847728818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.91,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847728955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.41,
+   "bytes": 16
+  },
+  {
+   "t": 1795847729812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.04,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847729943,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.25,
+   "bytes": 16
+  },
+  {
+   "t": 1795847730822,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 147.37,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847730952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.8,
+   "bytes": 16
+  },
+  {
+   "t": 1795847731819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.76,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847731955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.86,
+   "bytes": 16
+  },
+  {
+   "t": 1795847732814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.04,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847732948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.15,
+   "bytes": 16
+  },
+  {
+   "t": 1795847733813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.89,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847733943,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.49,
+   "bytes": 16
+  },
+  {
+   "t": 1795847734819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.01,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847734956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.14,
+   "bytes": 16
+  },
+  {
+   "t": 1795847735851,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 176.72,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847735991,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.77,
+   "bytes": 16
+  },
+  {
+   "t": 1795847736819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.43,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847737052,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 232.24,
+   "bytes": 16
+  },
+  {
+   "t": 1795847737820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.98,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847737956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.6,
+   "bytes": 16
+  },
+  {
+   "t": 1795847738820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.38,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847738948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.0,
+   "bytes": 16
+  },
+  {
+   "t": 1795847739834,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 159.39,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847739960,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.98,
+   "bytes": 16
+  },
+  {
+   "t": 1795847740823,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 148.36,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847740957,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.08,
+   "bytes": 16
+  },
+  {
+   "t": 1795847741820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.25,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847741956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.46,
+   "bytes": 16
+  },
+  {
+   "t": 1795847742825,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 150.53,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847742958,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.23,
+   "bytes": 16
+  },
+  {
+   "t": 1795847743831,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 156.44,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847743955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 123.56,
+   "bytes": 16
+  },
+  {
+   "t": 1795847744812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.2,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847744947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.16,
+   "bytes": 16
+  },
+  {
+   "t": 1795847745812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.3,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847745948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.1,
+   "bytes": 16
+  },
+  {
+   "t": 1795847746819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.83,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847746947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.13,
+   "bytes": 16
+  },
+  {
+   "t": 1795847747826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.68,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847747960,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.3,
+   "bytes": 16
+  },
+  {
+   "t": 1795847748820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.32,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847748953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.45,
+   "bytes": 16
+  },
+  {
+   "t": 1795847749807,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 132.54,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847749938,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.2,
+   "bytes": 16
+  },
+  {
+   "t": 1795847750814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.52,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847750945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.2,
+   "bytes": 16
+  },
+  {
+   "t": 1795847751811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.93,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847751950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.32,
+   "bytes": 16
+  },
+  {
+   "t": 1795847752809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 134.37,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847752946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.01,
+   "bytes": 16
+  },
+  {
+   "t": 1795847753818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.47,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847753950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.74,
+   "bytes": 16
+  },
+  {
+   "t": 1795847754818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.16,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847754952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.44,
+   "bytes": 16
+  },
+  {
+   "t": 1795847755817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.09,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847755953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.28,
+   "bytes": 16
+  },
+  {
+   "t": 1795847756814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.88,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847756949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.95,
+   "bytes": 16
+  },
+  {
+   "t": 1795847757817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.14,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847757949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.73,
+   "bytes": 16
+  },
+  {
+   "t": 1795847758812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.09,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847758944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.84,
+   "bytes": 16
+  },
+  {
+   "t": 1795847759809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 134.55,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847759941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.26,
+   "bytes": 16
+  },
+  {
+   "t": 1795847760827,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 152.9,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847760958,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.25,
+   "bytes": 16
+  },
+  {
+   "t": 1795847761816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.46,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847761940,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 123.78,
+   "bytes": 16
+  },
+  {
+   "t": 1795847762815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.27,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847762948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.42,
+   "bytes": 16
+  },
+  {
+   "t": 1795847763815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.37,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847763945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.58,
+   "bytes": 16
+  },
+  {
+   "t": 1795847764825,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 150.51,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847764953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.72,
+   "bytes": 16
+  },
+  {
+   "t": 1795847765810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 135.68,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847765947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.21,
+   "bytes": 16
+  },
+  {
+   "t": 1795847766815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.52,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847766944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.34,
+   "bytes": 16
+  },
+  {
+   "t": 1795847767813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.8,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847767941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.41,
+   "bytes": 16
+  },
+  {
+   "t": 1795847768815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.71,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847768946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.77,
+   "bytes": 16
+  },
+  {
+   "t": 1795847769819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.89,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847769949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.12,
+   "bytes": 16
+  },
+  {
+   "t": 1795847770825,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 150.66,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847770953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.43,
+   "bytes": 16
+  },
+  {
+   "t": 1795847771817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.15,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847772032,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 214.12,
+   "bytes": 16
+  },
+  {
+   "t": 1795847772829,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 154.73,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847772967,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 137.72,
+   "bytes": 16
+  },
+  {
+   "t": 1795847773807,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 132.93,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847774024,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 216.53,
+   "bytes": 16
+  },
+  {
+   "t": 1795847774817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.59,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847774953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.61,
+   "bytes": 16
+  },
+  {
+   "t": 1795847775826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.73,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847775956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.19,
+   "bytes": 16
+  },
+  {
+   "t": 1795847776815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.73,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847776941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 124.99,
+   "bytes": 16
+  },
+  {
+   "t": 1795847777812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.92,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847777950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.83,
+   "bytes": 16
+  },
+  {
+   "t": 1795847778815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.24,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847778952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.6,
+   "bytes": 16
+  },
+  {
+   "t": 1795847779815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.69,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847779947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.33,
+   "bytes": 16
+  },
+  {
+   "t": 1795847780816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.2,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847780940,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 124.2,
+   "bytes": 16
+  },
+  {
+   "t": 1795847781813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.42,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847781940,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.54,
+   "bytes": 16
+  },
+  {
+   "t": 1795847782815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.57,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847783042,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 226.08,
+   "bytes": 16
+  },
+  {
+   "t": 1795847783813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.33,
+   "bytes": 7755
+  },
+  {
+   "t": 1795847783945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.35,
+   "bytes": 16
+  },
+  {
+   "t": 1795847784819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.72,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847784955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.94,
+   "bytes": 16
+  },
+  {
+   "t": 1795847785809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 134.73,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847785940,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.55,
+   "bytes": 16
+  },
+  {
+   "t": 1795847786814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.49,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847786945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.32,
+   "bytes": 16
+  },
+  {
+   "t": 1795847787812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.2,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847787946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.05,
+   "bytes": 16
+  },
+  {
+   "t": 1795847788813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.13,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847788953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.38,
+   "bytes": 16
+  },
+  {
+   "t": 1795847789830,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 155.6,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847789973,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 142.26,
+   "bytes": 16
+  },
+  {
+   "t": 1795847790809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 134.83,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847790948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.49,
+   "bytes": 16
+  },
+  {
+   "t": 1795847791816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.25,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847791949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.05,
+   "bytes": 16
+  },
+  {
+   "t": 1795847792835,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 160.21,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847792960,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.4,
+   "bytes": 16
+  },
+  {
+   "t": 1795847793815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.77,
+   "bytes": 7761
+  },
+  {
+   "t": 1795847793953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 137.79,
+   "bytes": 16
+  },
+  {
+   "t": 1795847794823,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 149.05,
+   "bytes": 7758
+  },
+  {
+   "t": 1795847794963,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.84,
+   "bytes": 16
+  },
+  {
+   "t": 1795847795813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.27,
+   "bytes": 7758
+  },
+  {
+   "t": 1795847795941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.25,
+   "bytes": 16
+  },
+  {
+   "t": 1795847796816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.0,
+   "bytes": 7758
+  },
+  {
+   "t": 1795847796945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.99,
+   "bytes": 16
+  },
+  {
+   "t": 1795847797819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.38,
+   "bytes": 7758
+  },
+  {
+   "t": 1795847797946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.5,
+   "bytes": 16
+  },
+  {
+   "t": 1795847798816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.65,
+   "bytes": 7758
+  },
+  {
+   "t": 1795847798947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.51,
+   "bytes": 16
+  },
+  {
+   "t": 1795847799820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.38,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847799963,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 142.38,
+   "bytes": 16
+  },
+  {
+   "t": 1795847800816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.62,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847800952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.05,
+   "bytes": 16
+  },
+  {
+   "t": 1795847801818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.86,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847801947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.08,
+   "bytes": 16
+  },
+  {
+   "t": 1795847802821,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.68,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847802955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.56,
+   "bytes": 16
+  },
+  {
+   "t": 1795847803828,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 153.42,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847803959,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.96,
+   "bytes": 16
+  },
+  {
+   "t": 1795847804814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.84,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847804952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 137.11,
+   "bytes": 16
+  },
+  {
+   "t": 1795847805819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.2,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847806042,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 223.22,
+   "bytes": 16
+  },
+  {
+   "t": 1795847806816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.76,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847806945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.17,
+   "bytes": 16
+  },
+  {
+   "t": 1795847807812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.19,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847807943,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.73,
+   "bytes": 16
+  },
+  {
+   "t": 1795847808819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.56,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847808958,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.68,
+   "bytes": 16
+  },
+  {
+   "t": 1795847809817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.37,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847809948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.73,
+   "bytes": 16
+  },
+  {
+   "t": 1795847810819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.48,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847810949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.92,
+   "bytes": 16
+  },
+  {
+   "t": 1795847811819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.72,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847811960,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 140.62,
+   "bytes": 16
+  },
+  {
+   "t": 1795847812815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.82,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847812947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.07,
+   "bytes": 16
+  },
+  {
+   "t": 1795847813816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.78,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847813944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.64,
+   "bytes": 16
+  },
+  {
+   "t": 1795847814811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.33,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847814937,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.91,
+   "bytes": 16
+  },
+  {
+   "t": 1795847815812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.68,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847815949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.72,
+   "bytes": 16
+  },
+  {
+   "t": 1795847816815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.87,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847816941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.6,
+   "bytes": 16
+  },
+  {
+   "t": 1795847817813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.34,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847817941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.02,
+   "bytes": 16
+  },
+  {
+   "t": 1795847818816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.94,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847818947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.74,
+   "bytes": 16
+  },
+  {
+   "t": 1795847819813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.49,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847819937,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 124.04,
+   "bytes": 16
+  },
+  {
+   "t": 1795847820815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.85,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847820943,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.79,
+   "bytes": 16
+  },
+  {
+   "t": 1795847821812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.63,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847821946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.65,
+   "bytes": 16
+  },
+  {
+   "t": 1795847822826,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.43,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847823052,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 225.62,
+   "bytes": 16
+  },
+  {
+   "t": 1795847823819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.94,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847823953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.72,
+   "bytes": 16
+  },
+  {
+   "t": 1795847824812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.57,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847824949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.31,
+   "bytes": 16
+  },
+  {
+   "t": 1795847825812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.55,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847825944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.08,
+   "bytes": 16
+  },
+  {
+   "t": 1795847826818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.79,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847826959,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 140.15,
+   "bytes": 16
+  },
+  {
+   "t": 1795847827815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.03,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847827942,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.31,
+   "bytes": 16
+  },
+  {
+   "t": 1795847828810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 135.96,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847828941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.62,
+   "bytes": 16
+  },
+  {
+   "t": 1795847829820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.19,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847829949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.73,
+   "bytes": 16
+  },
+  {
+   "t": 1795847830821,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.7,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847830952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.7,
+   "bytes": 16
+  },
+  {
+   "t": 1795847831822,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 147.8,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847831957,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.96,
+   "bytes": 16
+  },
+  {
+   "t": 1795847832813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.72,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847832937,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 123.32,
+   "bytes": 16
+  },
+  {
+   "t": 1795847833819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.66,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847833945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.63,
+   "bytes": 16
+  },
+  {
+   "t": 1795847834808,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 133.79,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847834930,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 121.37,
+   "bytes": 16
+  },
+  {
+   "t": 1795847835816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.23,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847835957,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 139.72,
+   "bytes": 16
+  },
+  {
+   "t": 1795847836830,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 156.18,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847836983,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 152.17,
+   "bytes": 16
+  },
+  {
+   "t": 1795847837816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.76,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847837947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.39,
+   "bytes": 16
+  },
+  {
+   "t": 1795847838820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.24,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847838952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.41,
+   "bytes": 16
+  },
+  {
+   "t": 1795847839812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.02,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847839944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.16,
+   "bytes": 16
+  },
+  {
+   "t": 1795847840811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.43,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847840935,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 123.61,
+   "bytes": 16
+  },
+  {
+   "t": 1795847841816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.95,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847841949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.94,
+   "bytes": 16
+  },
+  {
+   "t": 1795847842821,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.39,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847842955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.02,
+   "bytes": 16
+  },
+  {
+   "t": 1795847843813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.54,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847843938,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 124.66,
+   "bytes": 16
+  },
+  {
+   "t": 1795847844813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.13,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847844946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.29,
+   "bytes": 16
+  },
+  {
+   "t": 1795847845810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 135.79,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847845941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.47,
+   "bytes": 16
+  },
+  {
+   "t": 1795847846814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.49,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847846944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.98,
+   "bytes": 16
+  },
+  {
+   "t": 1795847848031,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 356.78,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847848161,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.69,
+   "bytes": 16
+  },
+  {
+   "t": 1795847848818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.02,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847848952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.22,
+   "bytes": 16
+  },
+  {
+   "t": 1795847849821,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 147.16,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847849950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.29,
+   "bytes": 16
+  },
+  {
+   "t": 1795847850810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 135.67,
+   "bytes": 7752
+  },
+  {
+   "t": 1795847850941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.37,
+   "bytes": 16
+  },
+  {
+   "t": 1795847851817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.41,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847851953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.09,
+   "bytes": 148
+  },
+  {
+   "t": 1795847852812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.79,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847852954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 141.2,
+   "bytes": 148
+  },
+  {
+   "t": 1795847853809,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 135.19,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847854029,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 218.41,
+   "bytes": 148
+  },
+  {
+   "t": 1795847854819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.42,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847854955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.27,
+   "bytes": 148
+  },
+  {
+   "t": 1795847855825,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.27,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847855957,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.07,
+   "bytes": 148
+  },
+  {
+   "t": 1795847856810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.06,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847856938,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.18,
+   "bytes": 148
+  },
+  {
+   "t": 1795847857819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.61,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847857964,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 144.04,
+   "bytes": 148
+  },
+  {
+   "t": 1795847858827,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 152.47,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847858958,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.9,
+   "bytes": 148
+  },
+  {
+   "t": 1795847859820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.26,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847859955,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.48,
+   "bytes": 148
+  },
+  {
+   "t": 1795847860815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.45,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847860946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.79,
+   "bytes": 148
+  },
+  {
+   "t": 1795847861818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.83,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847861948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.42,
+   "bytes": 148
+  },
+  {
+   "t": 1795847862811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.14,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847862937,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.24,
+   "bytes": 148
+  },
+  {
+   "t": 1795847863818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.36,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847863948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.52,
+   "bytes": 148
+  },
+  {
+   "t": 1795847864820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.45,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847864962,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 142.07,
+   "bytes": 148
+  },
+  {
+   "t": 1795847865808,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 133.31,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847865962,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 153.89,
+   "bytes": 148
+  },
+  {
+   "t": 1795847866820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.6,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847866954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.67,
+   "bytes": 148
+  },
+  {
+   "t": 1795847867812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.06,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847868033,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 219.9,
+   "bytes": 148
+  },
+  {
+   "t": 1795847868810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.19,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847868942,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.82,
+   "bytes": 148
+  },
+  {
+   "t": 1795847869816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.29,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847869944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.5,
+   "bytes": 148
+  },
+  {
+   "t": 1795847870815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.43,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847870951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.61,
+   "bytes": 148
+  },
+  {
+   "t": 1795847871825,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 151.16,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847871958,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.66,
+   "bytes": 148
+  },
+  {
+   "t": 1795847872819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.54,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847872948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.6,
+   "bytes": 148
+  },
+  {
+   "t": 1795847873818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.9,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847873946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.38,
+   "bytes": 148
+  },
+  {
+   "t": 1795847874817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.43,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847874950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.64,
+   "bytes": 148
+  },
+  {
+   "t": 1795847875810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 135.59,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847875947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 136.21,
+   "bytes": 148
+  },
+  {
+   "t": 1795847876816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.45,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847876946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.08,
+   "bytes": 148
+  },
+  {
+   "t": 1795847877817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.11,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847877956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.06,
+   "bytes": 148
+  },
+  {
+   "t": 1795847878812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.07,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847878950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 137.15,
+   "bytes": 148
+  },
+  {
+   "t": 1795847879868,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 193.36,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847880023,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 154.86,
+   "bytes": 148
+  },
+  {
+   "t": 1795847880834,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 159.31,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847880969,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.82,
+   "bytes": 148
+  },
+  {
+   "t": 1795847881816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.0,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847881947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.77,
+   "bytes": 148
+  },
+  {
+   "t": 1795847882818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.81,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847882952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.7,
+   "bytes": 148
+  },
+  {
+   "t": 1795847883816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.21,
+   "bytes": 7754
+  },
+  {
+   "t": 1795847883947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.54,
+   "bytes": 148
+  },
+  {
+   "t": 1795847884822,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 147.52,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847884956,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.16,
+   "bytes": 148
+  },
+  {
+   "t": 1795847885818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.46,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847885948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.86,
+   "bytes": 148
+  },
+  {
+   "t": 1795847886822,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 147.31,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847886953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.09,
+   "bytes": 148
+  },
+  {
+   "t": 1795847887815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.29,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847887946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.17,
+   "bytes": 148
+  },
+  {
+   "t": 1795847888814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.53,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847888938,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 123.4,
+   "bytes": 148
+  },
+  {
+   "t": 1795847889818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.41,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847889945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.3,
+   "bytes": 148
+  },
+  {
+   "t": 1795847890817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.47,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847890950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.64,
+   "bytes": 148
+  },
+  {
+   "t": 1795847891810,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.04,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847891944,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.88,
+   "bytes": 148
+  },
+  {
+   "t": 1795847892811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.02,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847892941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.39,
+   "bytes": 148
+  },
+  {
+   "t": 1795847893814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.72,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847893946,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.06,
+   "bytes": 148
+  },
+  {
+   "t": 1795847894820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 145.62,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847894953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 132.71,
+   "bytes": 148
+  },
+  {
+   "t": 1795847895818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.95,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847895947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.19,
+   "bytes": 148
+  },
+  {
+   "t": 1795847896818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.73,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847896954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.8,
+   "bytes": 148
+  },
+  {
+   "t": 1795847897830,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 156.04,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847897986,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 154.79,
+   "bytes": 148
+  },
+  {
+   "t": 1795847898814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.34,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847898950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.75,
+   "bytes": 148
+  },
+  {
+   "t": 1795847899830,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 155.75,
+   "bytes": 7753
+  },
+  {
+   "t": 1795847899966,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 135.75,
+   "bytes": 148
+  },
+  {
+   "t": 1795847900814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.03,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847900942,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.24,
+   "bytes": 148
+  },
+  {
+   "t": 1795847901831,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 157.24,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847901961,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 129.17,
+   "bytes": 148
+  },
+  {
+   "t": 1795847902811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 136.93,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847902939,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.77,
+   "bytes": 148
+  },
+  {
+   "t": 1795847903815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.51,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847903950,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 134.16,
+   "bytes": 148
+  },
+  {
+   "t": 1795847904816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 141.69,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847904948,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.77,
+   "bytes": 148
+  },
+  {
+   "t": 1795847905816,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.28,
+   "bytes": 7751
+  },
+  {
+   "t": 1795847905942,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 124.74,
+   "bytes": 148
+  },
+  {
+   "t": 1795847906818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.97,
+   "bytes": 7758
+  },
+  {
+   "t": 1795847906949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 130.62,
+   "bytes": 148
+  },
+  {
+   "t": 1795847907822,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 147.52,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847907949,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.04,
+   "bytes": 148
+  },
+  {
+   "t": 1795847908811,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 134.04,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847908939,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 127.19,
+   "bytes": 148
+  },
+  {
+   "t": 1795847909813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.1,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847909940,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.05,
+   "bytes": 148
+  },
+  {
+   "t": 1795847910817,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 142.25,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847910951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.63,
+   "bytes": 148
+  },
+  {
+   "t": 1795847911818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.07,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847911952,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.48,
+   "bytes": 148
+  },
+  {
+   "t": 1795847912813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 138.9,
+   "bytes": 7759
+  },
+  {
+   "t": 1795847912945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.17,
+   "bytes": 148
+  },
+  {
+   "t": 1795847913813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.23,
+   "bytes": 7759
+  },
+  {
+   "t": 1795847914057,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 242.89,
+   "bytes": 148
+  },
+  {
+   "t": 1795847914818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.27,
+   "bytes": 7759
+  },
+  {
+   "t": 1795847914957,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.99,
+   "bytes": 148
+  },
+  {
+   "t": 1795847915812,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 137.78,
+   "bytes": 7759
+  },
+  {
+   "t": 1795847915945,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 131.91,
+   "bytes": 148
+  },
+  {
+   "t": 1795847916823,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 148.42,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847916951,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.23,
+   "bytes": 148
+  },
+  {
+   "t": 1795847917818,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 143.35,
+   "bytes": 7759
+  },
+  {
+   "t": 1795847918045,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 227.28,
+   "bytes": 284
+  },
+  {
+   "t": 1795847918820,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 146.01,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847918947,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 125.82,
+   "bytes": 149
+  },
+  {
+   "t": 1795847919814,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.31,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847919941,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 126.44,
+   "bytes": 149
+  },
+  {
+   "t": 1795847920819,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 144.95,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847920953,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 133.51,
+   "bytes": 149
+  },
+  {
+   "t": 1795847921813,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 139.14,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847921942,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 128.35,
+   "bytes": 149
+  },
+  {
+   "t": 1795847922815,
+   "path": "/api/1/orderbook_top",
+   "status": 200,
+   "rtt_ms": 140.32,
+   "bytes": 7756
+  },
+  {
+   "t": 1795847922954,
+   "path": "/api/1/trades",
+   "status": 200,
+   "rtt_ms": 138.83,
+   "bytes": 149
+  }
+ ]
+}

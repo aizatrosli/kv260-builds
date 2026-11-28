@@ -1,0 +1,302 @@
+{
+ "format": "tpuquant-graph",
+ "version": 1,
+ "name": "DirectionMLP",
+ "arith": {
+  "requant": "tflite_double_rounding (tpuv1 tflite_int8.py)",
+  "input_rounding": "round_half_to_even",
+  "constants": {
+   "LN_Q": 32,
+   "LN_K": 24,
+   "SM_K": 22,
+   "SM_OUT": 127,
+   "SM_QMAX": 8191,
+   "EXP_ONE": 32768,
+   "EW_SH": 16
+  }
+ },
+ "inputs": [
+  {
+   "name": "x",
+   "shape": [
+    "N",
+    16
+   ],
+   "dtype": "float32"
+  }
+ ],
+ "outputs": [
+  {
+   "name": "fc2",
+   "post": null
+  }
+ ],
+ "tensors": {
+  "x": {
+   "shape": [
+    "N",
+    16
+   ],
+   "dtype": "float",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 1.0
+  },
+  "x_q": {
+   "shape": [
+    "N",
+    16
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.03125
+  },
+  "act0": {
+   "shape": [
+    "N",
+    32
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    0,
+    127
+   ],
+   "scale": 0.047244094488188976
+  },
+  "act1": {
+   "shape": [
+    "N",
+    16
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    0,
+    127
+   ],
+   "scale": 0.03962236907217719
+  },
+  "fc2": {
+   "shape": [
+    "N",
+    3
+   ],
+   "dtype": "int8",
+   "zero_point": 0,
+   "range": [
+    -128,
+    127
+   ],
+   "scale": 0.06257417838678075
+  }
+ },
+ "nodes": [
+  {
+   "name": "x_q",
+   "op": "quantize",
+   "inputs": [
+    "x"
+   ],
+   "output": "x_q",
+   "attrs": {},
+   "params": {}
+  },
+  {
+   "name": "fc0",
+   "op": "linear",
+   "inputs": [
+    "x_q"
+   ],
+   "output": "act0",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": 0,
+    "act_max": 127,
+    "weight_bits": 8,
+    "weight_scheme": "channel"
+   },
+   "params": {
+    "w": {
+     "key": "fc0/w",
+     "dtype": "int8",
+     "shape": [
+      16,
+      32
+     ]
+    },
+    "bias": {
+     "key": "fc0/bias",
+     "dtype": "int32",
+     "shape": [
+      32
+     ]
+    },
+    "m0": {
+     "key": "fc0/m0",
+     "dtype": "int32",
+     "shape": [
+      32
+     ]
+    },
+    "shift": {
+     "key": "fc0/shift",
+     "dtype": "int8",
+     "shape": [
+      32
+     ]
+    },
+    "w_scale": {
+     "key": "fc0/w_scale",
+     "dtype": "float32",
+     "shape": [
+      32
+     ]
+    }
+   }
+  },
+  {
+   "name": "fc1",
+   "op": "linear",
+   "inputs": [
+    "act0"
+   ],
+   "output": "act1",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": 0,
+    "act_max": 127,
+    "weight_bits": 8,
+    "weight_scheme": "channel"
+   },
+   "params": {
+    "w": {
+     "key": "fc1/w",
+     "dtype": "int8",
+     "shape": [
+      32,
+      16
+     ]
+    },
+    "bias": {
+     "key": "fc1/bias",
+     "dtype": "int32",
+     "shape": [
+      16
+     ]
+    },
+    "m0": {
+     "key": "fc1/m0",
+     "dtype": "int32",
+     "shape": [
+      16
+     ]
+    },
+    "shift": {
+     "key": "fc1/shift",
+     "dtype": "int8",
+     "shape": [
+      16
+     ]
+    },
+    "w_scale": {
+     "key": "fc1/w_scale",
+     "dtype": "float32",
+     "shape": [
+      16
+     ]
+    }
+   }
+  },
+  {
+   "name": "fc2",
+   "op": "linear",
+   "inputs": [
+    "act1"
+   ],
+   "output": "fc2",
+   "attrs": {
+    "zp_in": 0,
+    "zp_out": 0,
+    "act_min": -128,
+    "act_max": 127,
+    "weight_bits": 8,
+    "weight_scheme": "channel"
+   },
+   "params": {
+    "w": {
+     "key": "fc2/w",
+     "dtype": "int8",
+     "shape": [
+      16,
+      3
+     ]
+    },
+    "bias": {
+     "key": "fc2/bias",
+     "dtype": "int32",
+     "shape": [
+      3
+     ]
+    },
+    "m0": {
+     "key": "fc2/m0",
+     "dtype": "int32",
+     "shape": [
+      3
+     ]
+    },
+    "shift": {
+     "key": "fc2/shift",
+     "dtype": "int8",
+     "shape": [
+      3
+     ]
+    },
+    "w_scale": {
+     "key": "fc2/w_scale",
+     "dtype": "float32",
+     "shape": [
+      3
+     ]
+    }
+   }
+  }
+ ],
+ "stats": {
+  "weight_bytes": 1072,
+  "n_nodes": 4
+ },
+ "meta": {
+  "qconfig": {
+   "act_method": "mse",
+   "act_symmetric": true,
+   "weight_bits": 8,
+   "layer_bits": {},
+   "int4_scheme": "group_int",
+   "group_size": 32,
+   "weight_method": "minmax",
+   "split_scales": true,
+   "fold_ln": true,
+   "output_affine": "host",
+   "method_overrides": {},
+   "softmax_mult": null,
+   "fixed_qparams": {
+    "x": [
+     0.03125,
+     0
+    ]
+   }
+  },
+  "int_exact": true
+ }
+}
