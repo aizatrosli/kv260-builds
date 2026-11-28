@@ -4,7 +4,7 @@ Every function here is the *specification* the RTL must match bit for bit.
   requant      : TFLite double-rounding requant, identical to tpuv1 model/quantization/tflite_int8.py
   ew_add       : residual add, out = sat8(rnd((a*Ma + b*Mb) / 2^SH))
   layernorm    : integer LayerNorm (no affine), int8 in -> int8 out at scale 1/LN_Q
-  softmax      : row softmax over int8 logits via 256-entry exp LUT -> int8 probs, scale 1/127
+  softmax      : row softmax over int8 logits via 256-entry exp LUT -> int8 probs, scale 1/q (q per layer)
   lut8         : int8 -> int8 table lookup (GELU)
 """
 import math
@@ -105,14 +105,18 @@ def exp_lut(s_logit):
     return np.round(EXP_ONE * np.exp(-d * s_logit)).astype(I32)
 
 
-def softmax(s, lut):
-    """s [..., T] int8 logits -> int8 probs 0..127 (scale 1/127)."""
+SM_QMAX = 8191     # largest per-layer softmax numerator (keeps the quotient < 2^20)
+
+
+def softmax(s, lut, q=127):
+    """s [..., T] int8 logits -> int8 probs 0..127 at scale 1/q (q: per-layer numerator,
+    127 = exact full range; larger q gives small probabilities more resolution, saturating at 127)."""
     s = np.asarray(s, I32)
     m = s.max(-1, keepdims=True)
     e = lut[m - s]
     Z = e.sum(-1, keepdims=True)
-    inv = (I32(127) << SM_K) // Z
-    return (e * inv + (1 << (SM_K - 1))) >> SM_K
+    inv = (I32(q) << SM_K) // Z
+    return np.minimum((e * inv + (1 << (SM_K - 1))) >> SM_K, 127)
 
 
 def gelu_lut(s_in, s_out):

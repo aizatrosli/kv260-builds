@@ -101,7 +101,7 @@ After `run`, it executes one program to the end. The host only places the 32x32 
 | `X_WUB tr base stride kt nt` | UB activations -> Weight FIFO as tiles, with transpose: Kᵀ for Q·Kᵀ, V for P·V |
 | `X_MM q sync kt in acc out entry B` | one output tile: [SYNC], kt x MATMUL, 33 SET_CONFIGs from the param ROM, SYNC, ACTIVATE |
 | `X_VEC op rows a b o count rstride vstride` | run `count` LayerNorm / softmax / GELU / residual-add jobs over UB vectors |
-| `X_LUT`, `X_VCFG`, `X_UBROM`, `X_LOADQ` | load a VPU LUT, set add multipliers, copy ROM -> UB (position embedding), load one requant set |
+| `X_LUT`, `X_VCFG`, `X_UBROM`, `X_LOADQ` | load a VPU LUT, set add multipliers + softmax numerator, copy ROM -> UB (position embedding), load one requant set |
 
 Ops that touch the UB wait for the core to drain, then own the UB ports. Everything else streams beside the core.
 
@@ -143,7 +143,42 @@ Important hardware catch: **UltraRAM cannot be initialised from the bitstream; o
 
 Either way, shrink the UB to 128 KiB. That needs `UbRows` changed in tpuv1's `tpu_pkg`, and frees about 25 URAM.
 
-Also found while doing this: in this bench, under Verilator 5.038, the PULP xbar accepts an AXI W beat before its AW is routed, so host writes land one row off. tpuv1's own `tb_tpu_core` does not show it. `tb_jepa_top` therefore loads the image and reads the result through the UB memory backdoor. Worth checking on the board, or with another simulator, before trusting AXI host writes.
+Correction to the first version of this README: the "AXI writes land one row off" problem was a race in my testbench, not in the PULP xbar. The testbench drove signals exactly on a clock edge. With that fixed, `tb_jepa_top` writes the image and reads the result over AXI again.
+
+## 7. Weights in UltraRAM, loaded once at boot (+ per-layer softmax scale)
+
+**Boot load.** The weight/data memory in `jepa_top` is now a RAM with `ram_style = "ultra"`. It has a boot load port: `wload_valid/ready/data/last`, plus `weights_ready`. `run` is held off until the last word has arrived.
+- `tb_jepa_top` streams the 74,368-word image (`wrom.hex`) through the port with 10% random source gaps. That takes 82,633 cycles, **0.83 ms**.
+- It then writes the image over AXI and runs the encoder.
+- The result is bit-exact on test images 0, 3 and 7.
+- The program, requant parameters and LUTs are only 86 KiB. They stay as BRAM, so they are true bitstream ROM.
+
+**On the board** (not built yet):
+1. The weight image ships as a file in the boot image or the root filesystem.
+2. At boot, the PS copies it into a DDR buffer.
+3. tpuv1's iDMA streams it through HP0 into the load port, about 1.2 MB in under 1 ms.
+
+The cleanest hook is an AXI write window for the load port in `tpu_fabric`, next to the WFIFO window, so iDMA (or the CPU) can write it like any other slave. This happens once per power-up. There is no host work per inference.
+
+**Fit on the XCK26 (estimate):**
+
+| memory | contents | blocks |
+|---|---|---|
+| UltraRAM, 64 available | weights: 74,368 x 128 bit = 2 URAM wide x 19 deep | 38 URAM |
+| UltraRAM | UB cut to 8,192 rows (the program uses 8,000) | 4 URAM |
+| UltraRAM | **total** | **42 of 64** |
+| BRAM36, 144 available | program ~4 + params ~16 + LUTs ~2 | ~22 |
+| BRAM36 | tpuv1's existing use | 44 |
+| BRAM36 | **total** | **~66 of 144** |
+
+Shrinking the UB is **required**: tpuv1's 1 MiB UB alone takes 32 URAM. That is a one-line `UbRows` change in tpuv1's `tpu_pkg`, which I have not made here.
+
+**Per-layer softmax numerator.** Softmax now outputs `min(round(p*q), 127)` at scale 1/q, with q chosen per layer by MSE on the calibration set. This follows the finding in tpu-stack's `quant/results/jepa_report.md`.
+- The chosen q values for the 6 layers are 599, 263, 263, 247, 287 and 167, instead of a fixed 127.
+- q travels in `X_VCFG.sq` (bits [63:50]) and reaches the VPU through `cmd_ma` for softmax jobs.
+- The divider runs 10 cycles instead of 7.
+- Cosine similarity to PyTorch rises from 0.9981 to **0.9991** (200 test images). On images 0, 3 and 7 it is 0.9992, 0.9991 and 0.9992.
+- The encoder now takes 470,960 cycles, **4.71 ms**.
 
 ## Files
 

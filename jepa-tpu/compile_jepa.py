@@ -18,7 +18,7 @@ Sequencer extension (opcodes >= 0x40, executed in front of the unmodified tpuv1 
   X_LOADQ 0x42 q entry          expands to the 33 SET_CONFIGs of requant set q from the param ROM
   X_VEC   0x43 op rows a b o count rstride vstride   `count` VPU jobs on UB vectors
   X_LUT   0x44 sel idx          load VPU LUT `sel` (0 exp, 1 gelu) from LUT ROM table idx
-  X_VCFG  0x45 ma mb            residual-add multipliers for later X_VEC ADD
+  X_VCFG  0x45 ma mb sq         residual-add multipliers and softmax numerator for later X_VEC
   X_UBROM 0x46 base count       copy the next `count` weight-ROM words into UB rows base..
   X_MM    0x47 q sync kt in acc out entry B   one output tile: [SYNC act] X_LOADQ, kt x MATMUL,
                (order: MATMULs, LOADQ, SYNC matrix, ACTIVATE) (the macro form of what --no-macro emits instruction by instruction)
@@ -42,7 +42,7 @@ XF = {
     X_VEC:   {"op": (8, 2), "rows": (10, 6), "a": (16, 16), "b": (32, 16), "o": (48, 16),
               "count": (64, 16), "rstride": (80, 16), "vstride": (96, 8)},
     X_LUT:   {"sel": (8, 1), "idx": (16, 8)},
-    X_VCFG:  {"ma": (8, 18), "mb": (32, 18)},
+    X_VCFG:  {"ma": (8, 18), "mb": (32, 18), "sq": (50, 14)},
     X_UBROM: {"base": (16, 16), "count": (32, 16)},
     X_MM:    {"q": (8, 2), "sync": (10, 1), "kt": (11, 6), "in_base": (17, 16), "acc_row": (33, 11),
               "out_row": (44, 16), "entry": (60, 16), "B": (76, 16)},
@@ -161,6 +161,13 @@ class Compiler:
             self.tile_idx += 1
         self.mark(name)
 
+    def vcfg(self, ma=None, mb=None, sq=None):
+        cur = getattr(self, "_vcfg", (0, 0, 127))
+        new = tuple(c if v is None else int(v) for c, v in zip(cur, (ma, mb, sq)))
+        if new != cur or not hasattr(self, "_vcfg"):
+            self.prog.append(xenc(X_VCFG, ma=new[0], mb=new[1], sq=new[2]))
+        self._vcfg = new
+
     def mark(self, name):
         self.marks.append((name, len(self.prog), len(self.wrom)))
 
@@ -200,7 +207,7 @@ class Compiler:
         # patch embedding + pos
         p = P["embed"]
         self.matmul("embed", R["img"], p["w"].shape[0], D, R["e"], ("rom", p["w"]), "embed", p["bias"], p["m0"], p["shift"])
-        self.prog.append(xenc(X_VCFG, ma=P["add0"][0], mb=P["add0"][1]))
+        self.vcfg(ma=P["add0"][0], mb=P["add0"][1])
         self.vec(V_ADD, DT, R["e"], R["x"], B, b=R["pos"])
         for l in range(L):
             self.lut(0, l, P[f"exp{l}"]); self.lut(1, L + l, P[f"gelu{l}"])
@@ -213,12 +220,13 @@ class Compiler:
                 qb = R["qkv"] + (h * dh // 16) * B
                 m0, sh = P[f"qk{l}"]
                 self.matmul(f"qk{l}h{h}", qb, dh, B, R["s"], ("ub", 1, kb, B), f"qk{l}", 0, m0, sh)
+                self.vcfg(sq=P.get(f"smq{l}", 127))
                 self.vec(V_SM, B // 16, R["s"], R["s"], B)
                 m0, sh = P[f"pv{l}"]
                 self.matmul(f"pv{l}h{h}", R["s"], B, dh, R["o"] + (h * dh // 16) * B, ("ub", 0, vb, B), f"pv{l}", 0, m0, sh)
             p = P[f"proj{l}"]
             self.matmul(f"proj{l}", R["o"], D, D, R["a"], ("rom", p["w"]), f"proj{l}", p["bias"], p["m0"], p["shift"])
-            self.prog.append(xenc(X_VCFG, ma=P[f"adda{l}"][0], mb=P[f"adda{l}"][1]))
+            self.vcfg(ma=P[f"adda{l}"][0], mb=P[f"adda{l}"][1])
             self.vec(V_ADD, DT, R["x"], R["x"], B, b=R["a"])
             self.vec(V_LN, DT, R["x"], R["h"], B)
             p = P[f"fc1{l}"]
@@ -226,7 +234,7 @@ class Compiler:
             self.vec(V_LUT, M // 16, R["f1"], R["f1"], B)
             p = P[f"fc2{l}"]
             self.matmul(f"fc2{l}", R["f1"], M, D, R["f2"], ("rom", p["w"]), f"fc2{l}", p["bias"], p["m0"], p["shift"])
-            self.prog.append(xenc(X_VCFG, ma=P[f"addb{l}"][0], mb=P[f"addb{l}"][1]))
+            self.vcfg(ma=P[f"addb{l}"][0], mb=P[f"addb{l}"][1])
             self.vec(V_ADD, DT, R["x"], R["x"], B, b=R["f2"])
         self.vec(V_LN, DT, R["x"], R["out"], B)
         self.prog += [asm.sync(asm.U_ALL), asm.interrupt_host(0x7E9A0001), asm.halt()]
@@ -240,7 +248,7 @@ class Machine:
         self.core = isasim.CoreSim(ub_init, [], check_hazards=True)
         self.rp = 0                       # weight-ROM read pointer
         self.lut = {0: None, 1: None}
-        self.ma = self.mb = 0
+        self.ma = self.mb = 0; self.sq = 127
 
     def loadq(self, q, entry):
         base = entry * 17
@@ -300,7 +308,7 @@ class Machine:
                 t = np.array(cp.lrom[f["idx"] * 256:(f["idx"] + 1) * 256], np.int64)
                 self.lut[f["sel"]] = t if f["sel"] == 0 else np.where(t > 127, t - 256, t)
             elif op == X_VCFG:
-                self.ma, self.mb = f["ma"], f["mb"]
+                self.ma, self.mb, self.sq = f["ma"], f["mb"], f["sq"]
             elif op == X_VEC:
                 core._sync(asm.U_ALL)
                 for v in range(f["count"]):
@@ -313,7 +321,7 @@ class Machine:
                     elif f["op"] == V_LN:
                         y = I.layernorm(a[None])[0]
                     else:
-                        y = I.softmax(a[None], self.lut[0])[0]
+                        y = I.softmax(a[None], self.lut[0], self.sq)[0]
                     for r in range(f["rows"]):
                         core.ub[f["o"] + v * f["vstride"] + r * f["rstride"]] = [int(x) for x in y[16 * r:16 * r + 16]]
         assert core.halted and core.irq_count == 1

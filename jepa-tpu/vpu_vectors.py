@@ -64,10 +64,10 @@ def main():
         for t in range(x.shape[0]): R.job(OP_LN, x[t], y[t])
         return y
 
-    def w_sm(s, lut):
-        y = sm(s, lut)
+    def w_sm(s, lut, q=127):
+        y = sm(s, lut, q)
         R.lut_load(0, lut)
-        for t in range(s.shape[0]): R.job(OP_SM, s[t], y[t])
+        for t in range(s.shape[0]): R.job(OP_SM, s[t], y[t], ma=q)    # numerator rides on ma
         return y
 
     def w_l8(x, lut):

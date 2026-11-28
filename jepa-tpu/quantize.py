@@ -35,7 +35,7 @@ def float_trace(enc, img):
         q = qkv[:, :, 0] / math.sqrt(dh); k = qkv[:, :, 1]; v = qkv[:, :, 2]
         T[f"q{l}"], T[f"k{l}"], T[f"v{l}"] = q, k, v
         s = torch.einsum("bthd,buhd->bhtu", q, k); T[f"s{l}"] = s
-        p = s.softmax(-1)
+        p = s.softmax(-1); T[f"p{l}_prob"] = p
         o = torch.einsum("bhtu,buhd->bthd", p, v).reshape(B, Tn, D); T[f"o{l}"] = o
         a = b.proj(o); T[f"p{l}"] = a
         x = x + a; T[f"ra{l}"] = x
@@ -46,6 +46,21 @@ def float_trace(enc, img):
         x = x + f2; T[f"rb{l}"] = x
     T["out"] = enc.ln(x)
     return T
+
+
+SM_PER_LAYER = True
+
+
+def sm_numerator(p):
+    """Per-layer softmax output scale 1/q: q minimising the MSE of round-and-saturate(p*q)/q."""
+    p = p.detach().double().flatten().numpy()
+    p = p[np.random.default_rng(0).choice(p.size, min(p.size, 400000), replace=False)]
+    best = None
+    for q in range(127, I.SM_QMAX + 1, 8):
+        err = ((np.minimum(np.round(p * q), 127) / q - p) ** 2).mean()
+        if best is None or err < best[0]:
+            best = (err, q)
+    return best[1]
 
 
 def qweight(W):
@@ -84,7 +99,8 @@ def build(enc, calib):
                             **dict(zip(("m0", "shift"), I.qmul_vec(s_ln * sw / s_out))))
         P[f"qk{l}"] = I.qmul_vec(np.array([S[f"q{l}"] * S[f"k{l}"] / S[f"s{l}"]]))
         P[f"exp{l}"] = I.exp_lut(S[f"s{l}"])
-        P[f"pv{l}"] = I.qmul_vec(np.array([(1 / 127) * S[f"v{l}"] / S[f"o{l}"]]))
+        P[f"smq{l}"] = q = sm_numerator(T[f"p{l}_prob"]) if SM_PER_LAYER else 127
+        P[f"pv{l}"] = I.qmul_vec(np.array([(1 / q) * S[f"v{l}"] / S[f"o{l}"]]))
         P[f"proj{l}"] = linear_params(np_(b.proj.weight).T, np_(b.proj.bias), S[f"o{l}"], S[f"p{l}"])
         P[f"adda{l}"] = (I.ew_mult(s_res, S[f"ra{l}"]), I.ew_mult(S[f"p{l}"], S[f"ra{l}"]))
         g2, be2 = np_(b.ln2.weight), np_(b.ln2.bias)
@@ -121,7 +137,7 @@ def int_forward(P, img_q, log=None):
             acc = I.matmul(q[:, sl], k[:, sl].T)
             if log is not None: log.append((f"qk{l}h{hh}", q[:, sl], k[:, sl].T, acc))
             s = I.requant(acc, 0, *P[f"qk{l}"])
-            p = I.softmax(s, P[f"exp{l}"])
+            p = I.softmax(s, P[f"exp{l}"], P.get(f"smq{l}", 127))
             acc = I.matmul(p, v[:, sl])
             if log is not None: log.append((f"pv{l}h{hh}", p, v[:, sl], acc))
             heads.append(I.requant(acc, 0, *P[f"pv{l}"]))

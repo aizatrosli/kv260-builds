@@ -49,8 +49,12 @@ module tb_jepa_top;
   logic [31:0] perf [8];
   logic [31:0] sperf [4];
 
+  logic wl_valid = 0, wl_ready, wl_last = 0, w_ready;
+  logic [127:0] wl_data = '0;
   jepa_top #(.N(N)) i_jepa (
     .clk_i(clk), .rst_ni(rst_n), .run_i(run),
+    .wload_valid_i(wl_valid), .wload_ready_o(wl_ready), .wload_data_i(wl_data), .wload_last_i(wl_last),
+    .weights_ready_o(w_ready),
     .ub_rd_en_o(ub_rd_en), .ub_rd_addr_o(ub_rd_addr), .ub_rd_data_i(ub_rd_data),
     .ub_wr_en_o(ub_wr_en), .ub_wr_addr_o(ub_wr_addr), .ub_wr_data_o(ub_wr_data), .ub_wr_be_o(ub_wr_be),
     .acc_rd_en_o(acc_rd_en), .acc_rd_addr_o(acc_rd_addr), .acc_rd_data_i(acc_rd_data),
@@ -85,6 +89,7 @@ module tb_jepa_top;
   endtask
 
   logic [127:0] ub_init [0:4095];
+  logic [127:0] wimg [0:131071];      // weight image (boot partition / DDR on the board)
   logic [127:0] exp_out [0:16383];
   int m_in, m_out_base, m_out_rows, m_prog, m_wrom, m_prom, m_lrom;
   string rom;
@@ -105,17 +110,32 @@ module tb_jepa_top;
     $fclose(fd);
     // "bitstream" contents: the hard-coded model
     $readmemh({rom, "/prog.hex"}, i_jepa.prog_rom, 0, m_prog - 1);
-    $readmemh({rom, "/wrom.hex"}, i_jepa.wrom,     0, m_wrom - 1);
+    $readmemh({rom, "/wrom.hex"}, wimg,            0, m_wrom - 1);
     $readmemh({rom, "/prom.hex"}, i_jepa.prom,     0, m_prom - 1);
     $readmemh({rom, "/lrom.hex"}, i_jepa.lrom,     0, m_lrom - 1);
     $readmemh({rom, "/ub_init.hex"}, ub_init, 0, m_in - 1);
     $readmemh({rom, "/exp_out.hex"}, exp_out, 0, m_out_rows - 1);
 
-    repeat (5) @(posedge clk); #TA rst_n = 1; repeat (50) @(posedge clk);
-    // The image goes straight into the UB memory (backdoor). The AXI host path is tpuv1's own
-    // and is covered by its tb_tpu_core; in this bench the PULP xbar W channel mis-simulates
-    // under Verilator 5.038 (W accepted before its AW is routed), so it is not used here.
-    for (int r = 0; r < m_in; r++) i_fab.i_ub.i_ram.gen_uram.mem[r] = ub_init[r];
+    repeat (5) @(posedge clk); #TA rst_n = 1; repeat (50) @(posedge clk); #TA;   // drive between edges
+    // the image: the host writes it into the UB over AXI (HPM0 port of tpu_fabric)
+    for (int r = 0; r < m_in; r++) axi_write(1, UB_BASE + 64'(r) * 16, ub_init[r]);
+    // boot: stream the weight image into the URAM, with random source gaps (DMA/flash)
+    begin
+      longint tb0; int gap_pct; tb0 = $time;
+      if (!$value$plusargs("GAP_PCT=%d", gap_pct)) gap_pct = 10;
+      for (int k = 0; k < m_wrom; k++) begin
+        while ($urandom_range(99) < gap_pct) begin wl_valid = 0; @(posedge clk); #TA; end
+        wl_valid = 1; wl_data = wimg[k]; wl_last = (k == m_wrom - 1);
+        do @(posedge clk); while (!wl_ready);
+        #TA;
+      end
+      wl_valid = 0; wl_last = 0;
+      @(posedge clk); #TA;
+      if (!w_ready) fail("weights_ready not set after boot load");
+      begin int nb = 0; for (int k = 0; k < m_wrom; k++) if (i_jepa.wrom[k] !== wimg[k]) begin if (nb < 3) $display("  wrom %0d got %h exp %h", k, i_jepa.wrom[k], wimg[k]); nb++; end
+        if (nb) fail($sformatf("%0d weight words wrong after boot", nb)); end
+      $display("tb_jepa_top: boot load %0d words in %0d cycles (%0.2f ms @100MHz)", m_wrom, ($time - tb0) / TCK, real'($time - tb0) / 1e6);
+    end
     @(posedge clk); #TA run = 1; t0 = $time;
     begin
       int c = 0;
@@ -129,7 +149,7 @@ module tb_jepa_top;
     begin
       int bad = 0; data_t d;
       for (int r = 0; r < m_out_rows; r++) begin
-        d = i_fab.i_ub.i_ram.gen_uram.mem[m_out_base + r];
+        axi_read(1, UB_BASE + 64'(m_out_base + r) * 16, d);
         if (d !== exp_out[r]) begin
           if (bad < 5) $display("  out row %0d: got %h exp %h", r, d, exp_out[r]);
           bad++;

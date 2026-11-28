@@ -6,8 +6,8 @@
 //   OP_LUT  out = gelu_lut[a]                                               (GELU, any int8->int8)
 //   OP_LN   S=sum a, V=D*sum a^2 - S^2, sig=max(isqrt V,1), inv=2^24/sig,
 //           out = sat8(((D*a - S)*32*inv + 2^23) >>> 24)                    (LayerNorm, no affine)
-//   OP_SM   m=max a, e=exp_lut[m-a], Z=sum e, inv=(127<<22)/Z,
-//           out = (e*inv + 2^21) >> 22                                       (softmax -> 0..127)
+//   OP_SM   m=max a, e=exp_lut[m-a], Z=sum e, inv=(q<<22)/Z  (q = cmd_ma, per layer),
+//           out = min((e*inv + 2^21) >> 22, 127)                             (softmax -> 0..127)
 // Flow: command, then `rows` input rows (in_a, and in_b for ADD); `rows` output rows follow.
 // Two stages with two vector buffers: the next command and its rows are accepted while the
 // previous vector is still in sqrt/divide/emit (cmd_ready/in_ready reflect the front stage).
@@ -101,6 +101,7 @@ module vpu #(
   logic [1:0]         op;
   logic [RW-1:0]      rows, xr;
   logic signed [31:0] S;
+  logic [17:0]        smq;                 // softmax numerator (cmd ma)
   logic signed [7:0]  mx;
   logic [31:0]        Z;
   logic [63:0]        inv, rem, rad, root, bitv, num, den, quo;
@@ -131,7 +132,7 @@ module vpu #(
       e = 64'(buf16[xr][16*i +: 16]) * inv + 64'd2097152;
       case (op)
         OP_LN:   emit_row[8*i +: 8] = sat8(v >>> 24);
-        OP_SM:   emit_row[8*i +: 8] = 8'(e >> 22);
+        OP_SM:   emit_row[8*i +: 8] = ((e >> 22) > 127) ? 8'd127 : 8'(e >> 22);   // saturate
         default: emit_row[8*i +: 8] = buf8[rsel][xr][8*i +: 8];
       endcase
     end
@@ -147,7 +148,7 @@ module vpu #(
     if (!rst_ni) begin
       fs <= F_IDLE; wsel <= 1'b0; f_op <= '0; f_rows <= '0; cnt <= '0; ma <= '0; mb <= '0;
       fS <= '0; fSq <= '0; fmx <= '0;
-      bs <= B_IDLE; rsel <= 1'b0; op <= '0; rows <= '0; xr <= '0; S <= '0; mx <= '0; Z <= '0;
+      bs <= B_IDLE; rsel <= 1'b0; smq <= 18'd127; op <= '0; rows <= '0; xr <= '0; S <= '0; mx <= '0; Z <= '0;
       inv <= '0; rem <= '0; rad <= '0; root <= '0; bitv <= '0; num <= '0; den <= '0; quo <= '0; it <= '0;
     end else begin
       // ---------------- front
@@ -173,7 +174,7 @@ module vpu #(
       // ---------------- back
       case (bs)
         B_IDLE: if (hand) begin
-          rsel <= wsel; op <= f_op; rows <= f_rows; S <= fS; mx <= fmx; Z <= '0; xr <= '0;
+          rsel <= wsel; op <= f_op; rows <= f_rows; S <= fS; mx <= fmx; Z <= '0; xr <= '0; smq <= ma;
           case (f_op)
             OP_SM: bs <= B_EXPSUM;
             OP_LN: begin
@@ -188,7 +189,8 @@ module vpu #(
           Z <= Z + exp_sum;
           xr <= xr + 1'b1;
           if (xr + 1'b1 == rows) begin
-            num <= 64'd127 << 22; den <= 64'(Z + exp_sum); quo <= '0; rem <= 64'd127 << 8; it <= 7'd13;  // Z >= 2^15 -> q < 2^14
+            // numerator q = ma (per layer, <= 8191); Z >= 2^15 -> quotient < 2^20
+            num <= 64'(smq) << 22; den <= 64'(Z + exp_sum); quo <= '0; rem <= 64'(smq) << 2; it <= 7'd19;
             bs <= B_DIV;
           end
         end

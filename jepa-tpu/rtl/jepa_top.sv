@@ -17,11 +17,20 @@ module jepa_top #(
   parameter int unsigned PROM_D   = 16384,
   parameter int unsigned LROM_D   = 4096,
   parameter int unsigned WF_D     = 512,
+  parameter bit          BOOT_LOAD = 1'b1,     // 1: weights arrive through the wload port
   parameter string PROG_INIT = "", WROM_INIT = "", PROM_INIT = "", LROM_INIT = ""
 ) (
   input  logic               clk_i,
   input  logic               rst_ni,
   input  logic               run_i,
+  // Boot load of the weight/data memory (UltraRAM: it cannot be initialised by the bitstream).
+  // At power-up a loader (on the board: iDMA reading the weight image the PS put in DDR) streams
+  // the words in order; wload_last_i marks the final word. run_i is held off until then.
+  input  logic               wload_valid_i,
+  output logic               wload_ready_o,
+  input  logic [127:0]       wload_data_i,
+  input  logic               wload_last_i,
+  output logic               weights_ready_o,
   // UB native ports (to tpu_fabric / unified_buffer)
   output logic               ub_rd_en_o,
   output logic [15:0]        ub_rd_addr_o,
@@ -54,7 +63,7 @@ module jepa_top #(
 
   // ------------------------------------------------------------------ ROMs
   (* rom_style = "block" *) logic [127:0] prog_rom [PROG_D];
-  (* rom_style = "block" *) logic [127:0] wrom     [WROM_D];
+  (* ram_style = "ultra" *) logic [127:0] wrom     [WROM_D];     // URAM, filled at boot
   (* rom_style = "block" *) logic [71:0]  prom     [PROM_D];
   (* rom_style = "block" *) logic [15:0]  lrom     [LROM_D];
   initial begin
@@ -141,6 +150,17 @@ module jepa_top #(
   logic [$clog2(WROM_D)-1:0] wrom_a;
   logic         wrom_re;
   always_ff @(posedge clk_i) if (wrom_re) wrom_q <= wrom[wrom_a];
+
+  // boot loader write port
+  logic [$clog2(WROM_D)-1:0] la;
+  logic wloaded;
+  assign wload_ready_o   = !wloaded;
+  assign weights_ready_o = wloaded;
+  always_ff @(posedge clk_i) if (wload_valid_i && !wloaded) wrom[la] <= wload_data_i;
+  always_ff @(posedge clk_i or negedge rst_ni) begin
+    if (!rst_ni) begin la <= '0; wloaded <= (WROM_INIT != "") || !BOOT_LOAD; end
+    else if (wload_valid_i && !wloaded) begin la <= la + 1'b1; if (wload_last_i) wloaded <= 1'b1; end
+  end
 
   // param / LUT ROM reads
   logic [$clog2(PROM_D)-1:0] prom_a;
@@ -231,7 +251,8 @@ module jepa_top #(
   // VPU wiring
   assign v_op = f_op; assign v_rows = f_rows;
   logic signed [17:0] ma_q, mb_q;
-  assign v_ma = ma_q; assign v_mb = mb_q;
+  logic signed [17:0] sq_q;                  // softmax numerator (X_VCFG sq)
+  assign v_ma = (f_op == 2'd3) ? sq_q : ma_q; assign v_mb = mb_q;
 
   // perf
   logic [31:0] pf [4];
@@ -243,7 +264,7 @@ module jepa_top #(
       seq_ub <= 1'b0; s_rd_en <= 1'b0; s_wr_en <= 1'b0; s_rd_addr <= '0; s_wr_addr <= '0; s_wr_data <= '0;
       prom_a <= '0; lrom_a <= '0; c <= '0; lq_q <= '0; drain_ok <= '0; rdv <= '0;
       v_cmd_valid <= 1'b0; v_in_valid <= 1'b0; v_lut_we <= 1'b0; v_lut_sel <= 1'b0; v_lut_addr <= '0; v_lut_wdata <= '0;
-      ma_q <= '0; mb_q <= '0; i <= '0; v <= '0; vo <= '0; r <= '0; ro <= '0; kt <= '0; nt <= '0;
+      ma_q <= '0; mb_q <= '0; sq_q <= 18'sd127; i <= '0; v <= '0; vo <= '0; r <= '0; ro <= '0; kt <= '0; nt <= '0;
       f_base <= '0; f_b <= '0; f_o <= '0; f_stride <= '0; f_cnt <= '0; f_rstride <= '0;
       f_kt <= '0; f_nt <= '0; f_vstride <= '0; f_tr <= 1'b0; f_op <= '0; f_rows <= '0;
       got_a <= 1'b0; got_b <= 1'b0; mm_mode <= 1'b0; mm_q <= '0; mm_kt <= '0; kcnt <= '0;
@@ -268,14 +289,14 @@ module jepa_top #(
       end
 
       case (st)
-        S_IDLE: if (run_i) st <= S_FETCH;
+        S_IDLE: if (run_i && wloaded) st <= S_FETCH;
         S_FETCH: begin seq_ub <= 1'b0; pw <= prog_rom[pc]; pc <= pc + 1'b1; st <= S_DISP; end
         S_DISP: begin
           if (pop_ < 8'h40) begin
             if (c_if_ready) st <= (pop_ == 8'h3F) ? S_DONE : S_FETCH;
           end else case (pop_)
             X_WROM:  begin wpend <= wpend + pw[31:8] - ((ws_can && !(st == S_UBROM)) ? 24'd1 : 24'd0); st <= S_FETCH; end
-            X_VCFG:  begin ma_q <= pw[25:8]; mb_q <= pw[49:32]; st <= S_FETCH; end
+            X_VCFG:  begin ma_q <= pw[25:8]; mb_q <= pw[49:32]; sq_q <= {4'd0, pw[63:50]}; st <= S_FETCH; end
             X_LOADQ: begin lq_q <= pw[9:8]; c <= '0; prom_a <= 14'(pw[31:16] * 17); st <= S_LQ_RD; end
             X_MM:    begin
               lq_q <= pw[9:8]; mm_q <= pw[9:8]; c <= '0; prom_a <= 14'(pw[75:60] * 17); mm_mode <= 1'b1;
