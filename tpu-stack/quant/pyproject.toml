@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tpuquant"
+version = "0.1.0"
+description = "PTQ / INT8-INT4 export toolkit for the tpuv1-based TPU-KV260 stack"
+requires-python = ">=3.10"
+dependencies = ["numpy", "torch"]
+
+[tool.setuptools]
+packages = ["tpuquant"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

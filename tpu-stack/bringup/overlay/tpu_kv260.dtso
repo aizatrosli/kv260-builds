@@ -1,0 +1,68 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Device-tree overlay for the tpuv1 "tpu_kv260" PL image (Kria KV260, Ubuntu + dfx-mgr).
+ *
+ * Hand-written because tpuv1 does not ship one: its old deploy script cloned the dtbo of a
+ * private reference app and only patched firmware-name.  Values below follow tpuv1:
+ *   soc/vivado/bd/kv260_ps.tcl      HPM0 128-bit, HP0 128-bit, pl_clk0 100 MHz, IRQ0
+ *   software/driver/kernel/*.c      node "a0000000.fabric", reg 0xA0000000/64 KiB, GIC SPI 89
+ * and the layout of AMD's own KV260 overlays (kria-apps-firmware, e.g. benchmark-b4096).
+ *
+ * Build:  dtc -@ -I dts -O dtb -o tpu_kv260.dtbo tpu_kv260.dtso
+ */
+/dts-v1/;
+/plugin/;
+
+&fpga_full {
+	#address-cells = <2>;
+	#size-cells = <2>;
+	/* Must equal the .bit.bin file name in /lib/firmware/xilinx/tpu_kv260/ */
+	firmware-name = "tpu_kv260.bit.bin";
+	/* pl_resetn0..3 */
+	resets = <&zynqmp_reset 116>, <&zynqmp_reset 117>, <&zynqmp_reset 118>, <&zynqmp_reset 119>;
+};
+
+&amba {
+	/* Same values as the ZynqMP base DT; restated so dtc can check reg below. */
+	#address-cells = <2>;
+	#size-cells = <2>;
+
+	/*
+	 * AXI port widths.  Pairs <regid value>:
+	 *   0..13 = S_AXI HPC0, HPC1, HP0, HP1, HP2, HP3, LPD (read, write); value 0 = 128-bit.
+	 *   14    = FPD afi_fs: bits[9:8] HPM0, [11:10] HPM1; 2'b10 = 128-bit -> 0xA00 (both 128).
+	 *   15    = LPD afi_fs (HPM0_LPD), unused here.
+	 * tpuv1 needs HPM0 = 128 and HP0 (regid 4/5) = 128.  A width mismatch shows up as
+	 * VERSION/SCRATCH reading back wrong lanes (tpuv1 lesson L1).
+	 */
+	afi0: afi0 {
+		compatible = "xlnx,afi-fpga";
+		config-afi = <0 0>, <1 0>, <2 0>, <3 0>, <4 0>, <5 0>, <6 0>, <7 0>,
+			     <8 0>, <9 0>, <10 0>, <11 0>, <12 0>, <13 0>, <14 0xa00>, <15 0x000>;
+	};
+
+	/* pl_clk0 = 100 MHz (PLL gives 99.999 MHz, same value AMD's overlays use). */
+	clocking0: clocking0 {
+		#clock-cells = <0>;
+		assigned-clock-rates = <99999001>;
+		assigned-clocks = <&zynqmp_clk 71>;
+		clock-output-names = "fabric_clk";
+		clocks = <&zynqmp_clk 71>;
+		compatible = "xlnx,fclk";
+	};
+
+	/*
+	 * Register window of tpu_regs (+0x0000) and the iDMA frontend (+0x1000).
+	 * Node name "fabric" + unit address => platform device "a0000000.fabric", which
+	 * tpu-load.sh binds with driver_override.  "generic-uio" lets uio_pdrv_genirq expose it
+	 * as /dev/uioN (name "fabric") for the m0..m5 board tests, but only if the kernel was
+	 * booted with uio_pdrv_genirq.of_id=generic-uio (see BRINGUP.md).
+	 * pl_ps_irq0[0] = GIC SPI 89 (IRQ ID 121), level-high.
+	 */
+	fabric: fabric@a0000000 {
+		compatible = "generic-uio";
+		reg = <0x0 0xa0000000 0x0 0x10000>;
+		interrupt-parent = <&gic>;
+		interrupts = <0 89 4>;
+	};
+};

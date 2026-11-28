@@ -1,0 +1,17 @@
+[project]
+name = "tpucc"
+version = "0.1.0"
+description = "Graph compiler / scheduler for the tpuv1 16x16 INT8 TPU (KV260)"
+requires-python = ">=3.10"
+dependencies = ["numpy"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["tpucc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: full-encoder simulation (tens of seconds)"]

@@ -1,0 +1,9 @@
+step,label,effort,total_us,speedup_cum,speedup_alone,marginal,lut,ff,dsp,bram36,uram,lut_pct,dsp_pct,bram_pct,uram_pct,status,loss_if_dropped
+baseline,tpuv1 as built,0,69948.8,1.0,1.0,1.0,38896,48336,376,43,32,33.2,30.1,29.9,50.0,ok,1.0
+control,"Streamlined control (requant-param table, no per-tile SYNC, ACT overlaps)",2,60933.9,1.15,1.15,1.15,38896,48336,376,43,32,33.2,30.1,29.9,50.0,ok,1.28
+ubw,UB -> weight-loader path for Q.K^T / P.V,2,60169.3,1.16,1.01,1.01,38896,48336,376,43,32,33.2,30.1,29.9,50.0,ok,1.03
+prefetch,Decoupled weight prefetch DMA (large bursts into the Weight FIFO),2,60156.3,1.16,1.01,1.0,38896,48336,376,43,32,33.2,30.1,29.9,50.0,ok,1.0
+double,Double-buffered weight shadow,2,59971.2,1.17,1.0,1.0,39920,50384,376,43,32,34.1,30.1,29.9,50.0,ok,1.01
+clock200,200 MHz clock,4,29965.8,2.33,2.0,2.0,41117,55422,376,43,32,35.1,30.1,29.9,50.0,ok,2.0
+array32,32x32 array with DSP packing (2 INT8 MAC / DSP48E2),4,10272.8,6.81,2.63,2.92,82680,124836,744,82,32,70.6,59.6,56.9,50.0,tight,3.64
+vpu_overlap,"VPU integrated, pipelined and overlapped with the array",3,7041.0,9.93,1.18,1.46,82680,124836,744,82,32,70.6,59.6,56.9,50.0,tight,1.46
